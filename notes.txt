@@ -1,0 +1,85 @@
+pip freeze > requirements.txt
+
+bootstrap-5
+pip install django-bootstrap-v5
+
+-----------------------------------------------------------------------------------------------
+Way1:
+$(document).ready(function(event) {
+		$('#submitButton').click(function(event) {
+			// Prevent default form submission
+			event.preventDefault();
+	
+			// Check if form fields are empty
+			var name = $('#name').val();
+			var email = $('#email_id').val();
+			var subject = $('#subject').val();
+			var message = $('#message').val();
+			if (name === '' || email === '' || subject === '' || message === '') {
+				//console.log("One or more fields are empty"); // Log if any field is empty
+				$('#successMessage').delay(2000).text("One or more fields are empty").show().fadeOut('slow');
+				// Show error message or handle empty fields
+				return; // Exit function to prevent further execution
+			}
+			// Create formData object
+			var formData = new FormData($('#myForm')[0]);
+			console.log("Form Data:", formData); // Log formData
+			// Send AJAX request
+			$.ajax({
+				url: "{% url 'contactform' %}", 
+				type: 'POST',
+				data: formData,
+				contentType: false, // Set content type to avoid automatic processing by browser
+				processData: false, // Prevent jQuery from processing data
+				success: function(response) {
+					// Show success message
+					$('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
+					// Clear form fields
+					$('#myForm')[0].reset();
+				},
+				error: function(xhr, status, error) {
+					console.error("Error:", xhr.responseText); // Log error response
+					// Show error message or handle error
+				}
+			});
+		});
+	});
+Way 2:
+$(document).ready(function() {
+    $('#submitButton').click(function(event) {
+        // Prevent default form submission
+        event.preventDefault();
+
+        // Serialize form data
+        var formData = new FormData($('#myForm')[0]);
+        console.log("Form Data:", formData); // Log formData
+
+        // Check if form data is empty
+        if (!formData.entries().next().value) {
+            console.log("Form Data is empty"); // Log if formData is empty
+            // Show error message or handle empty form data
+            return; // Exit function to prevent further execution
+        }
+
+        // Send AJAX request
+        $.ajax({
+            url: "{% url 'contactform' %}", 
+            type: 'POST',
+            data: formData,
+			contentType: false, // Set content type to avoid automatic processing by browser
+      		processData: false, // Prevent jQuery from processing data
+            success: function(response) {
+                console.log("Success:", response); // Log success response
+                // Show success message
+                $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
+                // Clear form fields
+                $('#myForm')[0].reset();
+            },
+            error: function(xhr, status, error) {
+                console.error("Error:", xhr.responseText); // Log error response
+                // Show error message or handle error
+            }
+        });
+    });
+});
+-----------------------------------------------------------------------------------------------

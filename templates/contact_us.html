@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-5">
+    <div class="text">
+       Contact us Form
+    </div>
+    <form method='post' action="" id="myForm">
+        {% csrf_token %}
+       <div class="form-row">
+          <div class="input-data">
+             <input name="first_name" type="text" required>
+             <div class="underline"></div>
+             <label for="">First Name</label>
+          </div>
+          <div class="input-data">
+             <input name="last_name" type="text" required>
+             <div class="underline"></div>
+             <label for="">Last Name</label>
+          </div>
+       </div>
+       <div class="form-row">
+          <div class="input-data">
+             <input name="email_address" type="text" required>
+             <div class="underline"></div>
+            <div id='messages'>
+             {% if messages %}
+               <ul class="hidden-messages" style="display:none">
+                  {% for message in messages %}
+                     <div id="notice" align="center">
+                           {{ message }}
+                     </div>
+                  {% endfor %}
+               </ul>
+              {% endif %}
+            </div>
+             <label for="">Email Address</label>
+          </div>
+          <div class="input-data">
+             <input name="website_name" type="text" required>
+             <div class="underline"></div>
+             <label for="">Website Name</label>
+          </div>
+       </div>
+       <div class="form-row">
+       <div class="input-data textarea">
+          <textarea name="customer_message" rows="8" cols="80" required></textarea>
+          <br />
+          <div class="underline"></div>
+          <label for="">Write your message</label>
+          <br />
+          <div class="form-row submit-btn">
+             <div class="input-data">
+                <div class="inner"></div>
+                <input type="submit" id="submitButton" value="submit">
+             </div>
+             <div id="failMessage" style="display: none;color: red;font-size: 30px;"></div>
+             <div id="successMessage" style="display: none;color: green;font-size: 30px;"></div>
+          </div>
+    </form>
+    </div>
+    
+{% endblock content%}
+
+{% block scripts%}
+<script>
+   $(document).ready(function() {
+      $('#submitButton').click(function(event) {
+          // Prevent default form submission
+          event.preventDefault();
+          // Flag to track if all fields are filled
+          var allFieldsFilled = true;
+          // Iterate over each input field, select field, and textarea
+          $('#myForm input, #myForm select, #myForm textarea').each(function(index, element) {
+              // Check if the element has a value
+              if (!$(this).val().trim()) {
+                  // Handle empty field (e.g., show error message)
+                  $('#failMessage').delay(2000).text("One or More Fields are empty").show().fadeOut('slow');
+                  allFieldsFilled = false; // Set flag to false if any field is empty
+                  console.log(allFieldsFilled)
+              }
+          });
+          console.log(allFieldsFilled)
+          // Check if all fields are filled
+          if (allFieldsFilled) {
+              // Serialize form data
+              var formData = new FormData($('#myForm')[0]);
+              // Send AJAX request
+              $.ajax({
+                  url: "{% url 'contactform' %}",
+                  type: 'POST',
+                  data: formData,
+                  contentType: false, // Set content type to avoid automatic processing by browser
+                  processData: false, // Prevent jQuery from processing data
+                  success: function(response) {
+                      // Show success message
+                      $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
+                      // Clear form fields
+                      $('#myForm')[0].reset();
+                  },
+                  error: function(xhr, status, error) {
+                     var errorMessage = xhr.responseJSON.error;
+                     if (errorMessage) {
+                         $('#failMessage').text(errorMessage).show();
+                     } else {
+                         console.error("Error:", xhr.responseText); // Log error response
+                         // Show error message or handle error
+                     }
+                 }
+                 
+              });
+          }
+      });
+  });
+</script>
+{% endblock %}
