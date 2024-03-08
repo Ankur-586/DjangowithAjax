@@ -1,0 +1,67 @@
+Library Management System
+This library management system will be used to track books, members, and their borrowings.
+Entities:
+Book:
+Attributes:
+id (integer, primary key)
+title (text)
+author (text)
+genre (text)
+isbn (text, unique)
+published_date (date)
+summary (text)
+available (boolean)
+Member:
+Attributes:
+id (integer, primary key)
+name (text)
+email (text, unique)
+phone_number (text)
+membership_type (text)
+joined_date (date)
+Borrowing:
+Attributes:
+id (integer, primary key)
+book_id (integer, foreign key referencing Book.id)
+member_id (integer, foreign key referencing Member.id)
+borrow_date (date)
+return_date (date, nullable)
+Relationships:
+A Book can be borrowed by many Members (one-to-many relationship).
+A Member can borrow many Books (one-to-many relationship).
+Additional Requirements:
+
+The system should allow adding, editing, and deleting books and members.
+The system should track borrowings and returns of books.
+The system should be able to generate reports on borrows overdue, most popular books, etc.
+Optional Features:
+
+User authentication for members.
+Ability to reserve books.
+Inventory management features (e.g., tracking book condition).
+This is a basic example, and you can modify it to fit your specific needs. Remember to consider additional attributes, relationships, and functionalities as you develop your schema further.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Requirements:
+
+The system needs to store information about books, authors, members, and loans.
+Books:
+Each book should have a unique identifier (primary key), title, author(s) (consider foreign key relationship with Authors table), publication year, genre, ISBN number (optional), and a summary.
+You can also include additional attributes like number of pages, language, edition, etc.
+Authors:
+Each author should have a unique identifier (primary key), first name, last name, and optionally a biography.
+Members:
+Each member should have a unique identifier (primary key), first name, last name, contact information (email, phone number), and a library card number (unique).
+Consider including additional attributes like membership type (standard, student, etc.) or registration date.
+Loans:
+Each loan should have a unique identifier (primary key), a reference to the borrowed book (foreign key to Books table), a reference to the borrowing member (foreign key to Members table), loan start date, and expected return date.
+You might also want to track the actual return date (if different from expected) and any late fees incurred.
+Challenge:
+
+Design the database schema with tables, columns, data types, primary keys, foreign keys, and any other relevant constraints (e.g., NOT NULL, UNIQUE).
+Consider how you would handle scenarios like multiple authors for a book, a member borrowing multiple books, or extending a loan.
+You can decide on additional functionalities or attributes based on your interests (e.g., tracking reservations, categorizing books by rating, etc.).
+Bonus:
+
+Implement the schema using a database management system of your choice (e.g., MySQL, PostgreSQL).
+Write sample queries to retrieve and manipulate data (e.g., find all overdue loans, list books by a specific author).
+This challenge allows you to practice database design principles, explore relationships between entities, and think about data integrity. Feel free to adjust the complexity or add features to make it more challenging!
