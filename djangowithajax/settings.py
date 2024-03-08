@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ajax_form',
     'bootstrap5',
+    'LibraryManagementSystem',
+    'Auth',
 ]
 
 MIDDLEWARE = [
@@ -135,3 +137,5 @@ MEDIA_ROOT = BASE_DIR/'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Auth User Model [appname.user]
+AUTH_USER_MODEL = "Auth.MyUser"

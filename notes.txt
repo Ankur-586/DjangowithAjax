@@ -1,5 +1,9 @@
-pip freeze > requirements.txt
+Admin Credentials:
+admin@gmail.com
+ankur
+intex123
 
+pip freeze > requirements.txt
 bootstrap-5
 pip install django-bootstrap-v5
 
