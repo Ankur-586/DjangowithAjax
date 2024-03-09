@@ -1,6 +1,136 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <h2> Home </h2>
+    <h2 class="lib text-center mt-3" style="color:greenyellow;">Library Management System</h2>
+    <div class="container">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#tab1">LibraryCard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab2">Book</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab3">Book_Borrower_Student</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab4">Loan</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div id="tab1" class="tab-pane fade show active">
+                <table class="table table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">Card Number</th>
+                            <th scope="col">Issued Date</th>
+                            <th scope="col">Expiration Date</th>
+                            <th scope="col">User</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="tab2" class="tab-pane fade">
+                <table class="table table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Author</th>
+                            <th scope="col">Publication Year</th>
+                            <th scope="col">Isbn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="tab3" class="tab-pane fade">
+                <table class="table table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">User</th>
+                            <th scope="col">Library Card</th>
+                            <th scope="col">Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="tab4" class="tab-pane fade">
+                <table class="table table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">Book</th>
+                            <th scope="col">Book Borrower Student</th>
+                            <th scope="col">Loan Date</th>
+                            <th scope="col">Return Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+{% endblock content %}
 
-{% endblock content%}
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('.nav-tabs a').click(function(e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+    });
+</script>
+{% endblock %}

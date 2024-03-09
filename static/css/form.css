@@ -1,12 +1,12 @@
 
-.container{
+.fm{
   max-width: 800px;
   background: #fff;
   width: 800px;
   padding: 25px 40px 10px 40px;
   box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
 }
-.container .text{
+.fm .text{
   text-align: center;
   font-size: 41px;
   font-weight: 600;
@@ -15,10 +15,10 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.container form{
+.fm form{
   padding: 30px 0 0 0;
 }
-.container form .form-row{
+.fm form .form-row{
   display: flex;
   margin: 32px 0;
 }
@@ -113,13 +113,13 @@ form .form-row .textarea{
   z-index: 2;
 }
 @media (max-width: 700px) {
-  .container .text{
+  .fm .text{
     font-size: 30px;
   }
-  .container form{
+  .fm form{
     padding: 10px 0 0 0;
   }
-  .container form .form-row{
+  .fm form .form-row{
     display: block;
   }
   form .form-row .input-data{
