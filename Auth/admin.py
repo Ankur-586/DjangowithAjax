@@ -4,7 +4,6 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
-
 from Auth.models import MyUser
 
 class UserCreationForm(forms.ModelForm):
@@ -18,7 +17,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ["email", "first_name"]
+        fields = ["email", "first_name","role"]
 
     def clean_password2(self):
         # Check that the two password entries match

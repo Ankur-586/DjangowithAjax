@@ -34,6 +34,7 @@ class Book(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     publication_year = models.IntegerField()
     isbn = models.CharField(max_length=13)
+    quantity = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title

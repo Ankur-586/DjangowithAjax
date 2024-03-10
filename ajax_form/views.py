@@ -6,15 +6,8 @@ import re
 from django.core.validators import validate_email
 from django.core.exceptions import  ValidationError
 
-def home(request):
-    return render(request,'home.html')
-
 def contact_us_page(request):
     return render(request,'contact_us.html')
-    
-from django.core.exceptions import ValidationError
-from django.contrib import messages
-# from .forms import ContactForm
 
 def contact_page_form(request):
     if request.method == 'POST':

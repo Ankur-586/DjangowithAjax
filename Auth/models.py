@@ -4,12 +4,14 @@ from Auth.manager import MyUserManager
 
 class MyUser(AbstractBaseUser,PermissionsMixin):
 
-    STAFF = 1
-    NORMALUSER = 2
+    ADMIN = 1
+    STAFF = 2
+    STUDENT = 3
     
     ROLE_CHOICES = (
+      (ADMIN, 'Admin'),
       (STAFF, 'Staff'),
-      (NORMALUSER, 'NormalUser'),
+      (STUDENT,'Student'),
     )
 
     email = models.EmailField(
@@ -27,7 +29,7 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
     objects = MyUserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name"]
+    REQUIRED_FIELDS = ["first_name","role"]
 
     def __str__(self):
         return self.email

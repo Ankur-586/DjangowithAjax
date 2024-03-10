@@ -6,11 +6,11 @@ class LibraryCardAdmin(admin.ModelAdmin):
 admin.site.register(LibraryCard,LibraryCardAdmin)
 
 class AuthordAdmin(admin.ModelAdmin):
-    list_display = ['name','name','nationality']
+    list_display = ['name','date_of_birth','nationality']
 admin.site.register(Author,AuthordAdmin)
 
 class BookdAdmin(admin.ModelAdmin):
-    list_display = ['title','author','publication_year','isbn']
+    list_display = ['title','author','publication_year','isbn','quantity']
 admin.site.register(Book,BookdAdmin)
 
 class Book_Borrower_StudentAdmin(admin.ModelAdmin):
