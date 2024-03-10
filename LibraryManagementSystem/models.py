@@ -47,7 +47,7 @@ class Book_Borrower_Student(models.Model):
     def __str__(self):
         return self.user.email
 
-class Loan(models.Model):
+class Borrower(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     book_borrower_student = models.ForeignKey(Book_Borrower_Student, on_delete=models.CASCADE)
     loan_date = models.DateTimeField(default=timezone.now)

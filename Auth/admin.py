@@ -1,6 +1,5 @@
-from django import forms
 from django.contrib import admin
-from django.contrib.auth.models import Group
+from django import forms
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
@@ -17,7 +16,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ["email", "first_name","role"]
+        fields = ["email", "first_name", "last_name", "role"]
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -46,7 +45,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ["email", "password", "first_name", "is_active", "is_admin"]
+        fields = ["email", "password", "first_name", "last_name", "is_active", "is_admin", "role"]
 
 
 class UserAdmin(BaseUserAdmin):
@@ -57,11 +56,11 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ["email", "first_name","last_name","is_admin"] 
-    list_filter = ["is_admin"]
+    list_display = ["email", "first_name", "last_name", "role", "is_admin"]
+    list_filter = ["role", "is_admin"]  # <-- Add role to list_filter
     fieldsets = [
         (None, {"fields": ["email", "password"]}),
-        ("Personal info", {"fields": ["first_name","last_name","role"]}),
+        ("Personal info", {"fields": ["first_name", "last_name", "role"]}),
         ("Permissions", {"fields": ["is_admin"]}),
     ]
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
@@ -71,7 +70,7 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 "classes": ["wide"],
-                "fields": ["email", "first_name", "password1", "password2"],
+                "fields": ["email", "first_name", "last_name", "role", "password1", "password2"],
             },
         ),
     ]
@@ -79,9 +78,5 @@ class UserAdmin(BaseUserAdmin):
     ordering = ["email"]
     filter_horizontal = []
 
-
 # Now register the new UserAdmin...
 admin.site.register(MyUser, UserAdmin)
-# ... and, since we're not using Django's built-in permissions,
-# unregister the Group model from admin.
-admin.site.unregister(Group)

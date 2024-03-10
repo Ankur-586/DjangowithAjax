@@ -1,27 +1,28 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <h2 class="lib text-center mt-3" style="color:greenyellow;">Library Management System</h2>
+    <h2 class="lib text-center mt-3" style="color:gray;">Library Management System</h2>
     <div class="container">
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link active" data-toggle="tab" href="#tab1">LibraryCard</a>
+                <a class="nav-link active text-danger" data-toggle="tab" href="#tab1">LibraryCard</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#tab2">Book</a>
+                <a class="nav-link text-danger" data-toggle="tab" href="#tab2">Book</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#tab3">Book_Borrower_Student</a>
+                <a class="nav-link text-danger" data-toggle="tab" href="#tab3">Book_Borrower_Student</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#tab4">Loan</a>
+                <a class="nav-link text-danger" data-toggle="tab" href="#tab4">Borrower</a>
             </li>
         </ul>
         <div class="tab-content">
             <div id="tab1" class="tab-pane fade show active">
-                <table class="table table-dark">
+                <table class="table table-dark table-bordered">
                     <thead>
                         <tr>
+                            <th scope="col">Id</th>
                             <th scope="col">Card Number</th>
                             <th scope="col">Issued Date</th>
                             <th scope="col">Expiration Date</th>
@@ -29,74 +30,71 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for card in library_card %}
                         <tr>
-                            <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
+                            <th scope="row">{{ card.id }}</th>
+                            <th scope="row">{{ card.card_number }}</th>
+                            <td>{{ card.issued_date }}</td>
+                            <td>{{ card.expiration_date }}</td>
+                            <td>{{ card.user }}</td>
                         </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
             <div id="tab2" class="tab-pane fade">
-                <table class="table table-dark">
+                <table class="table table-dark table-bordered">
                     <thead>
                         <tr>
+                            <th scope="col">Id</th>
                             <th scope="col">Title</th>
                             <th scope="col">Author</th>
                             <th scope="col">Publication Year</th>
                             <th scope="col">Isbn</th>
+                            <th scope="col">Quantity</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for bk in book %}
                         <tr>
-                            <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
+                            <th scope="row">{{ bk.id }}</th>
+                            <th scope="row">{{ bk.title }}</th>
+                            <td>{{ bk.author }}</td>
+                            <td>{{ bk.publication_year }}</td>
+                            <td>{{ bk.isbn }}</td>
+                            <td>{{ bk.quantity }}</td>
                         </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
-            <div id="tab3" class="tab-pane dark">
-                <table class="table table-dark">
+            <div id="tab3" class="tab-pane fade">
+                <table class="table table-dark table-dark table-bordered">
                     <thead>
                         <tr>
+                            <th scope="col">Id</th>
                             <th scope="col">User</th>
                             <th scope="col">Library Card</th>
                             <th scope="col">Address</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for bws in book_borrower_student %}
                         <tr>
-                            <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td>Otto</td>
+                            <th scope="row">{{ bws.id }}</th>
+                            <th scope="row">{{ bws.user }}</th>
+                            <td>{{ bws.library_card }}</td>
+                            <td>{{ bws.address }}</td>
                         </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
             <div id="tab4" class="tab-pane fade">
-                <table class="table table-dark">
+                <table class="table table-dark table-bordered">
                     <thead>
                         <tr>
+                            <th scope="col">Id</th>
                             <th scope="col">Book</th>
                             <th scope="col">Book Borrower Student</th>
                             <th scope="col">Loan Date</th>
@@ -104,18 +102,15 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for borrow in borrower %}
                         <tr>
-                            <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
+                            <th scope="row">{{ borrow.id }}</th>
+                            <th scope="row">{{ borrow.book }}</th>
+                            <td>{{ borrow.book_borrower_student }}</td>
+                            <td>{{  borrow.loan_date }}</td>
+                            <td>{{ borrow.return_date }}</td>
                         </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
