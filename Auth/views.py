@@ -1,3 +1,6 @@
 from django.shortcuts import render
+from .models import *
+from .forms import *
 
-# Create your views here.
+def reg_user(request):
+    return render(request,'Auth/add_user.html')
