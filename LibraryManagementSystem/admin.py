@@ -13,9 +13,9 @@ class BookdAdmin(admin.ModelAdmin):
     list_display = ['title','author','publication_year','isbn','quantity']
 admin.site.register(Book,BookdAdmin)
 
-class Book_Borrower_StudentAdmin(admin.ModelAdmin):
+class Student_InformationAdmin(admin.ModelAdmin):
     list_display = ['user','library_card','address']
-admin.site.register(Book_Borrower_Student,Book_Borrower_StudentAdmin)
+admin.site.register(Student_Information,Student_InformationAdmin)
 
 class BorrowerAdmin(admin.ModelAdmin):
     list_display = ['book','book_borrower_student','loan_date','return_date']

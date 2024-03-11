@@ -39,17 +39,21 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
-class Book_Borrower_Student(models.Model):
+class Student_Information(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     library_card = models.OneToOneField(LibraryCard, on_delete=models.CASCADE)
     address = models.TextField()
 
     def __str__(self):
         return self.user.email
+    
+    class Meta:
+        verbose_name = 'Student_Information'
+        verbose_name_plural = 'Student_Information'
 
 class Borrower(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    book_borrower_student = models.ForeignKey(Book_Borrower_Student, on_delete=models.CASCADE)
+    book_borrower_student = models.ForeignKey(Student_Information, on_delete=models.CASCADE)
     loan_date = models.DateTimeField(default=timezone.now)
     return_date = models.DateTimeField(null=True, blank=True)
 
