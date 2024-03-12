@@ -6,7 +6,7 @@
 <div class="container mt-5">
   <div class="title">Registration</div>
   <div class="content">
-     <form method="post" action="" id="myForm" autocomplete="off">
+     <form method="post" action="" id="myForm">
       {% csrf_token %}
         <div class="row">
            <div class="col-md-6 mt-3">
@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-6 mt-3">
            <div class="form-group">
-              <label for="phoneNumber" class="form-label">Date Of Birth</label>
+              <label for="dateofbirth" class="form-label">Date Of Birth</label>
               {{ form.date_of_birth }}
            </div>
         </div>
@@ -75,39 +75,18 @@
   $(document).ready(function () {
     $('#submitButton').click(function (event) {
         event.preventDefault();
-
-        var allFieldsFilled = true;
-        $('#myForm input, #myForm label, #myForm option').each(function (index, element) {
-            if (!$(this).val().trim()) {
-                allFieldsFilled = false;
-                $('#errorMessage').text("One or More Fields are empty").show().delay(2000).fadeOut('slow');
-                return false; // Exit the loop after showing the first error message
-            }
-        });
-        if (allFieldsFilled) {
-            var formData = new FormData($('#myForm')[0]);
-            $.ajax({
-                url: '{% url "register" %}',
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (response) {
-                    $('#successMessage').text(response.message).show().delay(2000).fadeOut('slow');
-                    $('#myForm')[0].reset();
-                },
-                error: function (xhr, status, error) {
-                    var errorMessage = xhr.responseJSON.error;
-                    if (errorMessage) {
-                        $('#validationerror').text(errorMessage).show().delay(2000).fadeOut(3000);
-                    } else {
-                        console.error("Error:", xhr.responseText);
-                        //$('#servererror').text(xhr.responseText).show().delay(2000).fadeOut(3000);
-                    }
-                }
-            });
-        }
+        var first_name = $('#id_first_name').val();
+        var last_name = $('#id_last_name').val();
+        var email = $('#id_email').val();
+        var date_of_birth = $('#id_date_of_birth').val();
+        var password1 = $('#id_password1').val();
+        var password2 = $('#id_password2').val();
+        var role = $('#role').val();
+        var formData = new FormData(document.querySelector("#myForm"));
+        console.log(new FormData().entries().next);
+        console.log('name',first_name,last_name,email,date_of_birth,password1,password2,role)
     });
-});
+  });
+   
 </script>
 {% endblock %}
