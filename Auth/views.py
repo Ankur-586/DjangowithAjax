@@ -16,12 +16,13 @@ def reg_user(request):
                 user.save()
                 return JsonResponse({'message': 'Form submitted successfully!'})
             except IntegrityError as e:
-                return JsonResponse({'message': str(e)}, status=400)
+                return JsonResponse({'IntegrityError': str(e)}, status=400)
             except Exception as e:
-                return JsonResponse({'message': str(e)}, status=500) # Internal server error
+                return JsonResponse({'Exception': str(e)}, status=500) # Internal server error
         else:
             # Form is invalid, return form errors
-            return JsonResponse({'message': form.errors}, status=400)
+            form_errors = {field: errors[0] for field, errors in form.errors.items()}
+            return JsonResponse({'formfielderror': form_errors}, status=400)
     form = AddUser()
     return render(request, 'Auth/add_user.html', {'form': form})
 
@@ -30,7 +31,7 @@ def reg_user(request):
 #         form = AddUser(request.POST)
 #         if form.is_valid():
 #             form.save()
-#             return HttpResponseRedirect('/')
+#             return JsonResponse({'message': 'Form submitted successfully!'})
 #     form = AddUser()
 #     return render(request, 'Auth/add_user.html', {'form': form})
 

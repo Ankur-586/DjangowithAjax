@@ -1,56 +1,102 @@
-  <div class="container mt-5">
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Register {% endblock %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/form1.css' %}">
+<div class="container mt-5">
     <div class="title">Registration</div>
     <div class="content">
-      <form action="#">
-        <div class="user-details">
-          <div class="input-box">
-            <span class="details">First Name</span>
-            <input type="text" placeholder="Enter your first name" required>
-          </div>
-          <div class="input-box">
-            <span class="details">Second Name</span>
-            <input type="text" placeholder="Enter your second name" required>
-          </div>
-          <div class="input-box">
-            <span class="details">UserName</span>
-            <input type="email" placeholder="Enter your email" required>
-          </div>
-          <div class="input-box">
-            <span class="details">Phone Number</span>
-            <input type="text" placeholder="Enter your number" required>
-          </div>
-          <div class="input-box">
-            <span class="details">Password</span>
-            <input type="text" placeholder="Enter your password" required>
-          </div>
-          <div class="input-box">
-            <span class="details">Confirm Password</span>
-            <input type="text" placeholder="Confirm your password" required>
-          </div>
-        </div>
-        <div class="gender-details">
-          <input type="radio" name="gender" id="dot-1">
-          <input type="radio" name="gender" id="dot-2">
-          <input type="radio" name="gender" id="dot-3">
-          <span class="gender-title">Gender</span>
-          <div class="category">
-            <label for="dot-1">
-            <span class="dot one"></span>
-            <span class="gender">Male</span>
-          </label>
-          <label for="dot-2">
-            <span class="dot two"></span>
-            <span class="gender">Female</span>
-          </label>
-          <label for="dot-3">
-            <span class="dot three"></span>
-            <span class="gender">Prefer not to say</span>
-            </label>
-          </div>
-        </div>
-        <div class="button">
-          <input type="submit" value="Register">
-        </div>
-      </form>
+        <form method="post" action="" id="myForm">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="firstName" class="form-label">First Name</label>
+                        {{ form.first_name }}
+                        <span class="text-danger" id="first_name_errors"></span>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        {{ form.last_name }}
+                        <span class="text-danger" id="last_name_errors"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Username (Email)</label>
+                        {{ form.email }}
+                        <span class="text-danger" id="email_errors"></span>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="dateofbirth" class="form-label">Date Of Birth</label>
+                        {{ form.date_of_birth }}
+                        <span class="text-danger" id="date_of_birth_errors"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        {{ form.password1 }}
+                        <span class="text-danger" id="password1_errors"></span>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        {{ form.password2 }}
+                        <span class="text-danger" id="password2_errors"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group mt-1">
+                <label for="role">Role</label>
+                <select class="form-control" id="role" name="role" aria-label="Select Role">
+                    <option value="">Select a Role</option>
+                    {% for value, label in form.fields.role.choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <span class="text-danger" id="role_errors"></span>
+            </div>
+            <div class="button">
+                <input type="submit" id="submitButton" value="Submit">
+            </div>
+        </form>
     </div>
-  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $('#myForm').submit(function(event) {
+        event.preventDefault();
+        $.ajax({
+            url: "{% url 'register' %}",
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
+                $('#myForm')[0].reset();
+            },
+            error: function(xhr, status, error) {
+                var errors = xhr.responseJSON;
+                $.each(errors, function(key, value) {
+                    $('#' + key + '_errors').text(value[0]);
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

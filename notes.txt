@@ -87,3 +87,32 @@ $(document).ready(function() {
     });
 });
 -----------------------------------------------------------------------------------------------
+$(document).ready(function () {
+    $('#submitButton').click(function (event) {
+        event.preventDefault();
+        /* var first_name = $('#id_first_name').val();
+        var last_name = $('#id_last_name').val();
+        var email = $('#id_email').val();
+        var date_of_birth = $('#id_date_of_birth').val();
+        var password1 = $('#id_password1').val();
+        var password2 = $('#id_password2').val();
+        var role = $('#role').val(); */
+        var formData = $('#myForm').serialize();
+        $.ajax({
+         url: "{% url 'register' %}", 
+         type: 'POST',
+         data: formData,
+         success: function(response) {
+             //console.log("Success:", response); // Log success response
+             // Show success message
+             $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
+             // Clear form fields
+             $('#myForm')[0].reset();
+         },
+         error: function(xhr, status, error) {
+             console.error("Error:", xhr.responseText); // Log error response
+             // Show error message or handle error
+         }
+     });
+    });
+  });

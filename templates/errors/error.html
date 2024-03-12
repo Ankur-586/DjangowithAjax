@@ -6,16 +6,3 @@
     </ul>
 {% endif %}
 
-<!-- {% include 'error.html' with field=form.Cust_Date %} form.name of the field as defined inside your model 
-def clean_Cust_Date(self):
-        data = self.cleaned_data['Cust_Date']
-        if data <= timezone.now().date():
-            raise forms.ValidationError("Date should not be before today")
-        return data
-    
-def clean_Cust_email_id(self):
-    data = self.cleaned_data['Cust_email_id']
-    if validate_email(data):
-        raise forms.ValidationError("Enter a Valid Email Address now")
-    return data
--->
