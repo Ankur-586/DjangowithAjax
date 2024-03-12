@@ -22,7 +22,7 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     date_of_birth = models.DateField(blank=True,null=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, blank=True, null=True)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES,default=STUDENT)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
