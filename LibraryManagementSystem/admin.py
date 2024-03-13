@@ -18,5 +18,5 @@ class Student_InformationAdmin(admin.ModelAdmin):
 admin.site.register(Student_Information,Student_InformationAdmin)
 
 class BorrowerAdmin(admin.ModelAdmin):
-    list_display = ['book','book_borrower_student','loan_date','return_date','created_at','updated_at']
+    list_display = ['book','book_borrower_student','borrow_date','due_date','return_date','created_at','updated_at']
 admin.site.register(Borrower,BorrowerAdmin)
