@@ -9,6 +9,8 @@ class LibraryCard(models.Model):
     issued_date = models.DateField(default=timezone.now)
     expiration_date = models.DateField()
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)  
+    updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         if not self.card_number:  # Generate card number only if not provided
@@ -25,6 +27,8 @@ class Author(models.Model):
     name = models.CharField(max_length=100)
     date_of_birth = models.DateField()
     nationality = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -35,6 +39,8 @@ class Book(models.Model):
     publication_year = models.IntegerField()
     isbn = models.CharField(max_length=13)
     quantity = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
@@ -43,6 +49,8 @@ class Student_Information(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     library_card = models.OneToOneField(LibraryCard, on_delete=models.CASCADE)
     address = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.user.email
@@ -56,6 +64,8 @@ class Borrower(models.Model):
     book_borrower_student = models.ForeignKey(Student_Information, on_delete=models.CASCADE)
     loan_date = models.DateTimeField(default=timezone.now)
     return_date = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.book_borrower_student.user} borrowed {self.book.title} on {self.loan_date}"

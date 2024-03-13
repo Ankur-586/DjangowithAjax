@@ -2,107 +2,104 @@
 {% load static %}
 {% block title %} Register {% endblock %}
 {% block content %}
+
 <link rel="stylesheet" href="{% static 'css/form1.css' %}">
 <div class="container mt-5">
-  <div class="title">Registration</div>
-  <div class="content">
-     <form method="post" action="" id="myForm">
-      {% csrf_token %}
-        <div class="row">
-           <div class="col-md-6 mt-1">
-              <div class="form-group">
-                 <label for="firstName" class="form-label">First Name</label>
-                 {{ form.first_name }}
-              </div>
-           </div>
-           <div class="col-md-6 mt-1">
-              <div class="form-group">
-                 <label for="lastName" class="form-label">Second Name</label>
-                 {{ form.last_name }}
-              </div>
-           </div>
-        </div>
-        <div class="row">
-        <div class="col-md-6 mt-1">
-           <div class="form-group">
-              <label for="username" class="form-label">Username (Email)</label>
-              {{ form.email }}
-              {% include 'errors/error.html' with field=form.email id="errorMessage" %}
-           </div>
-        </div>
-        <div class="col-md-6 mt-1">
-           <div class="form-group">
-              <label for="dateofbirth" class="form-label">Date Of Birth</label>
-              {{ form.date_of_birth }}
-           </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6 mt-1">
-        <div class="form-group">
-           <label for="password" class="form-label">Password</label>
-           {{ form.password1 }}
-        </div>
-      </div>
-        <div class="col-md-6 mt-1">
-        <div class="form-group">
-           <label for="confirmPassword" class="form-label">Confirm Password</label>
-           {{ form.password2 }}
-        </div>
-      </div>
-      </div>
-      <div class="form-group mt-1">
-        <label for="role">Role</label>
-        <select class="form-control" id="role" name="role" aria-label="Select Role">
-          <option value="">Select a Role</option>
-          {% for value, label in form.fields.role.choices %}
-            <option value="{{ value }}">{{ label }}</option>
-        {% endfor %}
-        </select>
-      </div>
-      <div class="button">
-        <input type="submit" id="submitButton" value="submit">
-      </div>
-     </form>
-  </div>
+    <div class="title">Registration</div>
+    <div class="content">
+        <form method="post" action="" id="myForm">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="firstName" class="form-label">First Name</label>
+                        {{ form.first_name }}
+                        <span class="text-danger" id="first_name_errors"></span>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        {{ form.last_name }}
+                        <span class="text-danger" id="last_name_errors"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Username (Email)</label>
+                        {{ form.email }}
+                        <span class="text-danger" id="email_errors"></span>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="dateofbirth" class="form-label">Date Of Birth</label>
+                        {{ form.date_of_birth }}
+                        <span class="text-danger" id="date_of_birth_errors"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        {{ form.password1 }}
+                        <span class="text-danger" id="password1_errors"></span>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        {{ form.password2 }}
+                        <span class="text-danger" id="password2_errors"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group mt-1">
+                <label for="role">Role</label>
+                <select class="form-control" id="role" name="role" aria-label="Select Role">
+                    <option value="">Select a Role</option>
+                    {% for value, label in form.fields.role.choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <span class="text-danger" id="role_errors"></span>
+            </div>
+            <div class="button">
+                <input type="submit" id="submitButton" value="Submit">
+            </div>
+        </form>
+    </div>
 </div>
-
-          <div id="successMessage" class="alert alert-success" role="alert" style="display: none;"></div> </div>
-          <div id="servererror" class="alert alert-success" role="alert" style="display: none;"></div> </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-  $(document).ready(function () {
-    $('#submitButton').click(function (event) {
-        event.preventDefault();
-        /* var first_name = $('#id_first_name').val();
-        var last_name = $('#id_last_name').val();
-        var email = $('#id_email').val();
-        var date_of_birth = $('#id_date_of_birth').val();
-        var password1 = $('#id_password1').val();
-        var password2 = $('#id_password2').val();
-        var role = $('#role').val(); */
-        var formData = $('#myForm').serialize();
-        $.ajax({
-         url: "{% url 'register' %}", 
-         type: 'POST',
-         data: formData,
-         success: function(response) {
-             //console.log("Success:", response); // Log success response
-             // Show success message
-             $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
-             // Clear form fields
-             $('#myForm')[0].reset();
-         },
-         error: function(xhr, status, error) {
-            $('#errorMessage').delay(2000).text(xhr.responseText).show().fadeOut('slow');
-             //console.error("Error:", xhr.responseText); // Log error response
-             // Show error message or handle error
-         }
-     });
-    });
+   $(document).ready(function() {
+      $('#myForm').submit(function(event) {
+          event.preventDefault();
+          $.ajax({
+              url: "{% url 'register' %}",
+              type: 'POST',
+              data: $(this).serialize(),
+              success: function(response) {
+                  $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
+                  $('#myForm')[0].reset();
+              },
+              error: function(xhr, status, error) {
+               var errors = xhr.responseJSON.errors;
+               if (errors) {
+                   $.each(errors, function(field, messages) {
+                       $('#' + field + '_errors').text(messages.join(' '));
+                   });
+               } else {
+                   console.error("Error:", xhr.responseText);
+               }
+           }
+          });
+      });
   });
-   
 </script>
 {% endblock %}

@@ -7,6 +7,10 @@ pip freeze > requirements.txt
 bootstrap-5
 pip install django-bootstrap-v5
 
+
+-----------------------------------------------------------------------------------------------
+What Is Model Inheritance in Django?
+https://www.makeuseof.com/django-model-inheritance/
 -----------------------------------------------------------------------------------------------
 Way1:
 $(document).ready(function(event) {
@@ -116,3 +120,159 @@ $(document).ready(function () {
      });
     });
   });
+  -----------------------------
+  def reg_user(request):
+    if request.method == 'POST':
+        form = AddUser(request.POST)
+        if form.is_valid():
+            try:
+                user = form.save(commit=False)
+                user.password = make_password(form.cleaned_data['password1'])
+                user.save()
+                return JsonResponse({'message': 'Registration successful!'})
+            except IntegrityError:
+                return JsonResponse({'errors': {'email': ['Username already exists.']}}, status=400)
+            except Exception as e:
+                print(f"Registration error: {e}")
+                return HttpResponseServerError('Internal server error.')
+        else:
+            # Extract form errors with more descriptive messages
+            form_errors = {field: form.errors[field] for field in form.errors}
+            return JsonResponse({'errors': form_errors}, status=400)
+    else:
+        form = AddUser()
+    return render(request, 'Auth/add_user.html', {'form': form})
+class AddUser(ModelForm):
+    password1 = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password2 = forms.CharField(
+        label="Password confirmation", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    role = forms.ChoiceField(choices=MyUser.ROLE_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+    class Meta:
+        model = MyUser
+        fields = ['email','first_name','last_name','date_of_birth']
+        
+        widgets = {
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter Your Email','type':'email'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Your First Name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Your Last Name'}),
+            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'Select Date of Birth', 'type': 'date'}),
+        }
+    
+    def clean_email(self):
+        data = self.cleaned_data['email']
+        if MyUser.objects.filter(email=data).exists():
+            raise forms.ValidationError("User with this Email address already exists!!")
+        return data
+    
+    def clean_password(self):
+        """
+        Custom validation to ensure passwords match during registration or password change.
+        """
+        password1 = self.cleaned_data['password1']
+        password2 = self.cleaned_data['password2']
+        if password1 != password2:
+            raise forms.ValidationError("Passwords don't match. Please try again!!!")
+        return password1
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Register {% endblock %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/form1.css' %}">
+<div class="container mt-5">
+    <div class="title">Registration</div>
+    <div class="content">
+        <form method="post" action="" id="myForm">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="firstName" class="form-label">First Name</label>
+                        {{ form.first_name }}
+                        <span class="text-danger" id="first_name_errors"></span>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        {{ form.last_name }}
+                        <span class="text-danger" id="last_name_errors"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Username (Email)</label>
+                        {{ form.email }}
+                        <span class="text-danger" id="email_errors"></span>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="dateofbirth" class="form-label">Date Of Birth</label>
+                        {{ form.date_of_birth }}
+                        <span class="text-danger" id="date_of_birth_errors"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        {{ form.password1 }}
+                        <span class="text-danger" id="password1_errors"></span>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        {{ form.password2 }}
+                        <span class="text-danger" id="password2_errors"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group mt-1">
+                <label for="role">Role</label>
+                <select class="form-control" id="role" name="role" aria-label="Select Role">
+                    <option value="">Select a Role</option>
+                    {% for value, label in form.fields.role.choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <span class="text-danger" id="role_errors"></span>
+            </div>
+            <div class="button">
+                <input type="submit" id="submitButton" value="Submit">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+   $(document).ready(function() {
+      $('#myForm').submit(function(event) {
+          event.preventDefault();
+          $.ajax({
+              url: "{% url 'register' %}",
+              type: 'POST',
+              data: $(this).serialize(),
+              success: function(response) {
+                  $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
+                  $('#myForm')[0].reset();
+              },
+              error: function(xhr, status, error) {
+               var errors = xhr.responseJSON.errors;
+               $.each(errors, function(field, messages) {
+                   $('#' + field + '_errors').text(messages.join(' '));
+                   console.log(field, messages)
+               });
+              }
+          });
+      });
+  });
+</script>
+{% endblock %}
+confirm password not working
