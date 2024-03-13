@@ -1,5 +1,7 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 from .models import *
+from django.shortcuts import redirect
 
 def home(request):
     library_card = LibraryCard.objects.all()
@@ -13,6 +15,20 @@ def home(request):
         'borrower':borrower
     }
     return render(request,'home.html',context)
+
+def borrow_book(request, book_pk, student_pk):
+    if request.method == 'POST':
+        # Call the save_borrowed_book function
+        borrower = save_borrowed_book(request, student_pk, book_pk)
+        if borrower:
+            # Redirect to a success page or display a success message
+            return redirect('borrow_success')
+        else:
+            # Handle the case where Book or Student_Information is not found
+            return redirect('borrow_error')
+    else:
+        # Handle GET request if necessary
+        return HttpResponse('ok')
 
 # def home(request):
 #     library_card = LibraryCard.objects.all()

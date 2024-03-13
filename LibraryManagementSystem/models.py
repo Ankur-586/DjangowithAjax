@@ -3,7 +3,8 @@ from django.utils import timezone
 from Auth.models import MyUser
 import uuid
 from django.core.exceptions import ValidationError
-from datetime import date,timedelta,datetime
+from datetime import date,timedelta
+from django.shortcuts import get_object_or_404
 
 class LibraryCard(models.Model):
     card_number = models.CharField(max_length=20, unique=True)
@@ -82,6 +83,32 @@ class Borrower(models.Model):
         self.due_date = self.borrow_date + timedelta(days=10)
         self.save()
         
+def save_borrowed_book(request, student_pk, book_pk):
+    """
+    Saves a new borrower for the given student and book.
+    
+    Args:
+        request: The HTTP request object.
+        student_pk: The primary key of the student.
+        book_pk: The primary key of the book.
+    
+    Returns:
+        The created borrower object if successful, None otherwise.
+    """
+    try:
+        book = get_object_or_404(Book, pk=book_pk)
+        student = get_object_or_404(Student_Information, pk=student_pk)
+        borrower = Borrower(
+            book=book,
+            book_borrower_student=student,
+            borrow_date=timezone.now(),
+        )
+        borrower.set_due_date()
+        borrower.save()
+        return borrower
+    except (Book.DoesNotExist, Student_Information.DoesNotExist) as e:
+        # Handle the case where Book or Student_Information is not found
+        return None  # Or raise a more specific exception
     # @property
     # def overdue_fine(self):
     #     if self.is_overdue:

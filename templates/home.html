@@ -97,8 +97,12 @@
                             <th scope="col">Id</th>
                             <th scope="col">Book</th>
                             <th scope="col">Book Borrower Student</th>
-                            <th scope="col">Loan Date</th>
+                            <th scope="col">Borrow Date</th>
+                            <th scope="col">Due Date</th>
                             <th scope="col">Return Date</th>
+                            <th scope="col">Created At</th>
+                            <th scope="col">Updated At</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -107,16 +111,23 @@
                             <th scope="row">{{ borrow.id }}</th>
                             <th scope="row">{{ borrow.book }}</th>
                             <td>{{ borrow.book_borrower_student }}</td>
-                            <td>{{  borrow.loan_date }}</td>
+                            <td>{{  borrow.borrow_date }}</td>
+                            <td>{{ borrow.due_date }}</td>
                             <td>{{ borrow.return_date }}</td>
+                            <td>{{ borrow.created_at }}</td>
+                            <td>{{ borrow.updated_at }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                    Open Modal on Another Page 
+                </button>
             </div>
         </div>
     </div>
-    
+
+{% include 'Create_borrower/borrower.html' %}
 {% endblock content %}
 
 {% block scripts %}
@@ -126,6 +137,11 @@
             e.preventDefault();
             $(this).tab('show');
         });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $('#borrowModal').modal('show'); // Show the modal when the page loads
     });
 </script>
 {% endblock %}
