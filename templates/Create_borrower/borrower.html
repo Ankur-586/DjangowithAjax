@@ -1,16 +1,10 @@
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#borrowModal">
-    Borrow Book
-</button>
-  
-<!-- Modal -->
-<div class="modal fade" id="borrowModal" tabindex="-1" role="dialog" aria-labelledby="borrowModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<!-- Modal Start -->
+<div class="modal" id="borrowModal" tabindex="-1" role="dialog" aria-labelledby="borrowModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="borrowModalLabel">Borrow Book</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <h5 class="modal-title" id="borrowModalLabel">Book Issue Form</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div class="modal-body">
@@ -19,6 +13,7 @@
                     <div class="form-group">
                         <label for="book">Select Book:</label>
                         <select name="book" id="book" class="form-control">
+                            <option value="">Select Book</option>
                             {% for book in books %}
                                 <option value="{{ book.pk }}">{{ book.title }}</option>
                             {% endfor %}
@@ -27,15 +22,53 @@
                     <div class="form-group">
                         <label for="student">Select Student:</label>
                         <select name="student" id="student" class="form-control">
-                            {% for student in students %}
-                                <option value="{{ student.pk }}">{{ student.name }}</option>
+                            <option value="">Select Student</option>
+                            {% for student in student_information %}
+                                <option value="{{ student.pk }}">{{ student.user }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Borrow Book</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                      </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+   /* 
+   $(document).ready(function() {
+        $('.nav-tabs a').click(function(e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+
+        $('#borrowModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var bookId = button.data('book-id'); // Extract book ID from button data attribute
+            var studentId = button.data('student-id'); // Extract student ID from button data attribute
+
+            // AJAX call to fetch book and student details
+            $.ajax({
+                url: "", // Replace with your actual URL pattern for fetching details
+                data: {
+                    'book_pk': bookId,
+                    'student_pk': studentId
+                },
+                success: function(response) {
+                    // Update modal form with retrieved details (if needed)
+                    $('#book').val(response.book_id); // Assuming you have a select element with ID "book"
+                    $('#student').val(response.student_id); // Assuming you have a select element with ID "student"
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error("Error fetching borrow details:", textStatus, errorThrown);
+                    // Handle errors appropriately (e.g., display an error message)
+                }
+            });
+        });
+    }); */
+</script>
+<!-- Modal End -->

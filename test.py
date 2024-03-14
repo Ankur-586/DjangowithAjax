@@ -23,8 +23,10 @@ So, essentially, this code iterates over the error messages received from the se
 containers in the HTML form with the appropriate error messages for each field.
 '''
 
-error: function(xhr, status, error) {
-var errors = xhr.responseJSON.errors;
-$.each(errors, function(field, messages) {
-    $('#' + field + '_errors').text(messages.join(' '));
-});
+# error: function(xhr, status, error) {
+# var errors = xhr.responseJSON.errors;
+# $.each(errors, function(field, messages) {
+#     $('#' + field + '_errors').text(messages.join(' '));
+# });
+from datetime import date
+print(date.today())

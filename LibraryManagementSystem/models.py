@@ -1,3 +1,5 @@
+import datetime
+import re
 from django.db import models
 from django.utils import timezone
 from Auth.models import MyUser
@@ -5,6 +7,7 @@ import uuid
 from django.core.exceptions import ValidationError
 from datetime import date,timedelta
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponseBadRequest, JsonResponse
 
 class LibraryCard(models.Model):
     card_number = models.CharField(max_length=20, unique=True)
@@ -71,7 +74,7 @@ class Borrower(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.book_borrower_student.user} borrowed {self.book.title} on {self.borrow_date}"
+        return f"Student: {self.book_borrower_student.user} borrowed book: {self.book.title} on Date: {self.borrow_date}"
     
     @property
     def is_overdue(self):
@@ -81,39 +84,37 @@ class Borrower(models.Model):
 
     def set_due_date(self):
         self.due_date = self.borrow_date + timedelta(days=10)
-        self.save()
-        
-def save_borrowed_book(request, student_pk, book_pk):
-    """
-    Saves a new borrower for the given student and book.
     
-    Args:
-        request: The HTTP request object.
-        student_pk: The primary key of the student.
-        book_pk: The primary key of the book.
-    
-    Returns:
-        The created borrower object if successful, None otherwise.
-    """
-    try:
-        book = get_object_or_404(Book, pk=book_pk)
-        student = get_object_or_404(Student_Information, pk=student_pk)
-        borrower = Borrower(
-            book=book,
-            book_borrower_student=student,
-            borrow_date=timezone.now(),
-        )
-        borrower.set_due_date()
-        borrower.save()
-        return borrower
-    except (Book.DoesNotExist, Student_Information.DoesNotExist) as e:
-        # Handle the case where Book or Student_Information is not found
-        return None  # Or raise a more specific exception
     # @property
     # def overdue_fine(self):
-    #     if self.is_overdue:
-    #         fine = self.due_date < date.today()
-    
+    #     no_of_days = self.due_date - date.today()
+            
+def save_borrowed_book(request,student_pk, book_pk):
+  """
+  Saves a new borrower for the given student and book.
+  Args:
+      request_data: The dictionary containing form data (if applicable).
+      student_pk: The primary key of the student.
+      book_pk: The primary key of the book.
+  Returns:
+    The created borrower object if successful, None otherwise.
+  """
+  try:
+    book = get_object_or_404(Book, pk=book_pk)
+    student = get_object_or_404(Student_Information, pk=student_pk)
+    borrower = Borrower(
+        book_borrower_student=student,  # Use the actual field name
+        book=book,
+        borrow_date=timezone.now(),
+    )
+    borrower.set_due_date()
+    borrower.save()
+    return JsonResponse({'message':'Borrower created Successfully!!'})
+  except (Book.DoesNotExist, Student_Information.DoesNotExist) as e:
+        return JsonResponse({'message': f"Book or Student not found"})
+  except Exception as e:
+    print(f"Unexpected error saving borrower: {e}")
+    return JsonResponse({'message': f"{e}"})
     
 # if a book is gettign borrowed frequently then its due date is in 5 days or else 10 days
 # return date exceed due date then 10 rupee fine perday

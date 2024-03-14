@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
 from .models import *
 from django.shortcuts import redirect
@@ -6,31 +6,21 @@ from django.shortcuts import redirect
 def home(request):
     library_card = LibraryCard.objects.all()
     book = Book.objects.all()
-    book_borrower_student = Student_Information.objects.all()
+    student_information = Student_Information.objects.all()
     borrower = Borrower.objects.all()
     context = {
         'library_card':library_card,
-        'book':book,
-        'book_borrower_student':book_borrower_student,
+        'books':book,
+        'student_information':student_information,
         'borrower':borrower
     }
     return render(request,'home.html',context)
 
-def borrow_book(request, book_pk, student_pk):
-    if request.method == 'POST':
-        # Call the save_borrowed_book function
-        borrower = save_borrowed_book(request, student_pk, book_pk)
-        if borrower:
-            # Redirect to a success page or display a success message
-            return redirect('borrow_success')
-        else:
-            # Handle the case where Book or Student_Information is not found
-            return redirect('borrow_error')
-    else:
-        # Handle GET request if necessary
-        return HttpResponse('ok')
+def borrow_book(request, student_pk, book_pk):
+    borrower = save_borrowed_book(request, student_pk, book_pk)
+    return borrower
 
-# def home(request):
+# def home(request):{% url 'borrow_book' student_id book_id %}
 #     library_card = LibraryCard.objects.all()
 #     book = Book.objects.all()
 #     student_info = Student_Information.objects.all()

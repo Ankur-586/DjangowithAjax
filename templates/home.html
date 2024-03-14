@@ -74,15 +74,17 @@
                         <tr>
                             <th scope="col">Id</th>
                             <th scope="col">User</th>
+                            <th scope="col">Student Id</th>
                             <th scope="col">Library Card</th>
                             <th scope="col">Address</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for bws in book_borrower_student %}
+                        {% for bws in student_information %}
                         <tr>
                             <th scope="row">{{ bws.id }}</th>
                             <th scope="row">{{ bws.user }}</th>
+                            <th scope="row">{{ bws.user.id }}</th>
                             <td>{{ bws.library_card }}</td>
                             <td>{{ bws.address }}</td>
                         </tr>
@@ -91,12 +93,14 @@
                 </table>
             </div>
             <div id="tab4" class="tab-pane fade">
-                <table class="table table-dark table-bordered">
+                <table class="table table-dark table-bordered text-center">
                     <thead>
                         <tr>
                             <th scope="col">Id</th>
                             <th scope="col">Book</th>
+                            <th scope="col">Book Id</th>
                             <th scope="col">Book Borrower Student</th>
+                            <th scope="col">Student Id</th>
                             <th scope="col">Borrow Date</th>
                             <th scope="col">Due Date</th>
                             <th scope="col">Return Date</th>
@@ -109,8 +113,10 @@
                         {% for borrow in borrower %}
                         <tr>
                             <th scope="row">{{ borrow.id }}</th>
-                            <th scope="row">{{ borrow.book }}</th>
+                            <td>{{ borrow.book }}</td>
+                            <td>{{ borrow.book.id }}</td>
                             <td>{{ borrow.book_borrower_student }}</td>
+                            <th scope="row">{{ borrow.book_borrower_student.user.id }}</th>
                             <td>{{  borrow.borrow_date }}</td>
                             <td>{{ borrow.due_date }}</td>
                             <td>{{ borrow.return_date }}</td>
@@ -120,14 +126,16 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                    Open Modal on Another Page 
+                <button type="button" class="btn btn-secondary" style="float:right;" data-bs-toggle="modal" data-bs-target="#borrowModal">
+                    Create Borrower 
                 </button>
             </div>
         </div>
     </div>
-
-{% include 'Create_borrower/borrower.html' %}
+    <!-- Includes Bootstrap Modal -->
+    {% include 'Create_borrower/borrower.html' %}
+    <!-- Comment Close -->
+    
 {% endblock content %}
 
 {% block scripts %}
@@ -139,9 +147,5 @@
         });
     });
 </script>
-<script>
-    $(document).ready(function() {
-        $('#borrowModal').modal('show'); // Show the modal when the page loads
-    });
-</script>
+
 {% endblock %}
