@@ -123,3 +123,9 @@ $(document).ready(function () {
      });
     });
   });
+<div class="row">
+<div class="col-12"><div id="successMessage" class="alert alert-success" role="alert" style="display: none;"></div>
+    <button type="button" class="btn btn-secondary" style="float:right;" data-bs-toggle="modal" data-bs-target="#borrowModal">
+        Create Borrower 
+    </button>
+</div>

@@ -1,102 +1,156 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %} Register {% endblock %}
 {% block content %}
-
-<link rel="stylesheet" href="{% static 'css/form1.css' %}">
-<div class="container mt-5">
-    <div class="title">Registration</div>
-    <div class="content">
-        <form method="post" action="" id="myForm">
-            {% csrf_token %}
-            <div class="row">
-                <div class="col-md-6 mt-1">
-                    <div class="form-group">
-                        <label for="firstName" class="form-label">First Name</label>
-                        {{ form.first_name }}
-                        <span class="text-danger" id="first_name_errors"></span>
-                    </div>
-                </div>
-                <div class="col-md-6 mt-1">
-                    <div class="form-group">
-                        <label for="lastName" class="form-label">Last Name</label>
-                        {{ form.last_name }}
-                        <span class="text-danger" id="last_name_errors"></span>
+    <h2 class="lib text-center mt-3" style="color:gray;">Library Management System</h2>
+    <div class="container">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active text-danger" data-toggle="tab" href="#tab1">LibraryCard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-danger" data-toggle="tab" href="#tab2">Book</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-danger" data-toggle="tab" href="#tab3">Student Information</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-danger" data-toggle="tab" href="#tab4">Borrower</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div id="tab1" class="tab-pane fade show active">
+                <table class="table table-dark table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Card Number</th>
+                            <th scope="col">Issued Date</th>
+                            <th scope="col">Expiration Date</th>
+                            <th scope="col">User</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for card in library_card %}
+                        <tr>
+                            <th scope="row">{{ card.id }}</th>
+                            <th scope="row">{{ card.card_number }}</th>
+                            <td>{{ card.issued_date }}</td>
+                            <td>{{ card.expiration_date }}</td>
+                            <td>{{ card.user }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="tab2" class="tab-pane fade">
+                <table class="table table-dark table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Author</th>
+                            <th scope="col">Publication Year</th>
+                            <th scope="col">Isbn</th>
+                            <th scope="col">Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bk in book %}
+                        <tr>
+                            <th scope="row">{{ bk.id }}</th>
+                            <th scope="row">{{ bk.title }}</th>
+                            <td>{{ bk.author }}</td>
+                            <td>{{ bk.publication_year }}</td>
+                            <td>{{ bk.isbn }}</td>
+                            <td>{{ bk.quantity }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="tab3" class="tab-pane fade">
+                <table class="table table-dark table-dark table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">User</th>
+                            <th scope="col">Student Id</th>
+                            <th scope="col">Library Card</th>
+                            <th scope="col">Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bws in student_information %}
+                        <tr>
+                            <th scope="row">{{ bws.id }}</th>
+                            <th scope="row">{{ bws.user }}</th>
+                            <th scope="row">{{ bws.user.id }}</th>
+                            <td>{{ bws.library_card }}</td>
+                            <td>{{ bws.address }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="tab4" class="tab-pane fade">
+                <table class="table table-dark table-bordered text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Book</th>
+                            <th scope="col">Book Id</th>
+                            <th scope="col">Book Borrower Student</th>
+                            <th scope="col">Student Id</th>
+                            <th scope="col">Borrow Date</th>
+                            <th scope="col">Due Date</th>
+                            <th scope="col">Return Date</th>
+                            <th scope="col">Created At</th>
+                            <th scope="col">Updated At</th>
+                            <th scope="col">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for borrow in borrower %}
+                        <tr>
+                            
+                            <th scope="row">{{ borrow.id }}</th>
+                            <td>{{ borrow.book }}</td>
+                            <td>{{ borrow.book.id }}</td>
+                            <td>{{ borrow.book_borrower_student }}</td>
+                            <th scope="row">{{ borrow.book_borrower_student.user.id }}</th>
+                            <td>{{  borrow.borrow_date }}</td>
+                            <td>{{ borrow.due_date }}</td>
+                            <td>{{ borrow.return_date }}</td>
+                            <td>{{ borrow.created_at }}</td>
+                            <td>{{ borrow.updated_at }}</td>
+                            <td><button type='button' class="btn btn-secondary delete-btn" data-borrower-id="{{ borrow.id }}">Delete</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-10"><div id="successMessage" class="alert alert-success" role="alert" style="display: none;"></div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-secondary" style="float:right;" data-bs-toggle="modal" data-bs-target="#borrowModal">
+                            Create Borrower 
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6 mt-1">
-                    <div class="form-group">
-                        <label for="username" class="form-label">Username (Email)</label>
-                        {{ form.email }}
-                        <span class="text-danger" id="email_errors"></span>
-                    </div>
-                </div>
-                <div class="col-md-6 mt-1">
-                    <div class="form-group">
-                        <label for="dateofbirth" class="form-label">Date Of Birth</label>
-                        {{ form.date_of_birth }}
-                        <span class="text-danger" id="date_of_birth_errors"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6 mt-1">
-                    <div class="form-group">
-                        <label for="password" class="form-label">Password</label>
-                        {{ form.password1 }}
-                        <span class="text-danger" id="password1_errors"></span>
-                    </div>
-                </div>
-                <div class="col-md-6 mt-1">
-                    <div class="form-group">
-                        <label for="confirmPassword" class="form-label">Confirm Password</label>
-                        {{ form.password2 }}
-                        <span class="text-danger" id="password2_errors"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group mt-1">
-                <label for="role">Role</label>
-                <select class="form-control" id="role" name="role" aria-label="Select Role">
-                    <option value="">Select a Role</option>
-                    {% for value, label in form.fields.role.choices %}
-                        <option value="{{ value }}">{{ label }}</option>
-                    {% endfor %}
-                </select>
-                <span class="text-danger" id="role_errors"></span>
-            </div>
-            <div class="button">
-                <input type="submit" id="submitButton" value="Submit">
-            </div>
-        </form>
+        </div>
     </div>
-</div>
-
-{% endblock %}
+    <div id="successMessage" class="alert alert-success" role="alert" style="display: none;"></div> </div>
+    <!-- Includes Bootstrap Modal -->
+    {% include 'Create_borrower/borrower.html' %}
+    <!-- Comment Close -->
+    
+{% endblock content %}
 
 {% block scripts %}
+<script src="{% static 'js/home/table_tab.js' %}"></script> 
 <script>
-$(document).ready(function() {
-    $('#myForm').submit(function(event) {
-        event.preventDefault();
-        $.ajax({
-            url: "{% url 'register' %}",
-            type: 'POST',
-            data: $(this).serialize(),
-            success: function(response) {
-                $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
-                $('#myForm')[0].reset();
-            },
-            error: function(xhr, status, error) {
-                var errors = xhr.responseJSON;
-                $.each(errors, function(key, value) {
-                    $('#' + key + '_errors').text(value[0]);
-                });
-            }
-        });
-    });
-});
+    var deleteBookUrl = "{% url 'delete' 0 %}";
 </script>
+<script src="{% static 'js/home/delete.js' %}"></script>
 {% endblock %}
+

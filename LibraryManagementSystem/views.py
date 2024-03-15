@@ -22,7 +22,7 @@ def borrow_book(request, student_pk, book_pk):
 def delete(request, id):
   member = Borrower.objects.get(id=id)
   member.delete()
-  return JsonResponse({'message':'Record Deleted!! '})
+  return JsonResponse({'message':'Record Deleted!!'})
         
 
 # def home(request):{% url 'borrow_book' student_id book_id %}
