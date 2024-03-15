@@ -51,6 +51,6 @@ def reg_user(request):
             form_errors = {field: form.errors[field] for field in form.errors}
             return JsonResponse({'errors': form.errors}, status=400)
     else:
-        form = AddUser()
+        form = AddUser(initial={"email": None})
     return render(request, 'Auth/add_user.html', {'form': form})
 

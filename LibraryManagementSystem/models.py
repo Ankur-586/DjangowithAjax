@@ -115,7 +115,7 @@ def save_borrowed_book(request,student_pk, book_pk):
   except Exception as e:
     print(f"Unexpected error saving borrower: {e}")
     return JsonResponse({'message': f"{e}"})
-    
+
 # if a book is gettign borrowed frequently then its due date is in 5 days or else 10 days
 # return date exceed due date then 10 rupee fine perday
 # how to figure out borrow frequency.

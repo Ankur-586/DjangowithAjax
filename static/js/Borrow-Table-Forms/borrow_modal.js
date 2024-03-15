@@ -1,0 +1,36 @@
+$(document).ready(function() {
+    $('#saveChangesBtn').click(function() {
+        // Fetch the selected book and student IDs
+        var selectedBookId = $('#book').val();
+        var selectedStudentId = $('#student').val();
+        // Create data object to be sent via AJAX
+        var formData = {
+            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+            'student_pk': selectedStudentId,
+            'book_pk': selectedBookId,
+        };
+
+        // Send AJAX request to save the data
+        $.ajax({
+            url: borrowBookUrl.replace('0', selectedStudentId).replace('0', selectedBookId),
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                // Handle success response
+                console.log('Data saved successfully:', response);
+                // Optionally, close the modal or show a success message
+                $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
+                // updateBorrowerTable()
+                $('#borrowModal').modal('hide');
+                // Reload the page to update the borrower table
+                //location.reload();
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error('Error saving data:', status, error);
+                // Optionally, display an error message to the user
+            }
+        });
+    });
+});

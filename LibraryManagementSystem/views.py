@@ -1,7 +1,6 @@
 from django.http import HttpResponse,HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
 from .models import *
-from django.shortcuts import redirect
 
 def home(request):
     library_card = LibraryCard.objects.all()
@@ -19,6 +18,12 @@ def home(request):
 def borrow_book(request, student_pk, book_pk):
     borrower = save_borrowed_book(request, student_pk, book_pk)
     return borrower
+
+def delete(request, id):
+  member = Borrower.objects.get(id=id)
+  member.delete()
+  return JsonResponse({'message':'Record Deleted!! '})
+        
 
 # def home(request):{% url 'borrow_book' student_id book_id %}
 #     library_card = LibraryCard.objects.all()
