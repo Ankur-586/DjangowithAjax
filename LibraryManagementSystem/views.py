@@ -19,6 +19,24 @@ def borrow_book(request, student_pk, book_pk):
     borrower = save_borrowed_book(request, student_pk, book_pk)
     return borrower
 
+def late_fine(request, id):
+    borrow = get_object_or_404(Borrower, id=id)
+    current_datetime = timezone.localtime(timezone.now())
+    try:
+        if borrow.due_date < current_datetime:
+            fine = overdue_fine(request,id)
+            borrow.return_date = current_datetime
+            borrow.save()
+            return HttpResponse(f"Fine: {fine}")
+        borrow.return_date = current_datetime
+        borrow.save()
+        return HttpResponse("No Fine") 
+    except Exception as e:
+        # Log any errors encountered
+        print(f"Error in late_fine view: {e}")
+        # Return an error response
+        return HttpResponse("An error occurred while processing the request", status=500)
+
 def delete(request, id):
   member = Borrower.objects.get(id=id)
   member.delete()

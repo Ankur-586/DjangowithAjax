@@ -55,7 +55,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for bk in book %}
+                        {% for bk in books %}
                         <tr>
                             <th scope="row">{{ bk.id }}</th>
                             <th scope="row">{{ bk.title }}</th>
@@ -129,12 +129,12 @@
                     </tbody>
                 </table>
                 <div class="row">
-                    <div class="col-10"><div id="successMessage" class="alert alert-success" role="alert" style="display: none;"></div>
-                    <div class="col-2">
+                    <div class="col-sm-2">
                         <button type="button" class="btn btn-secondary" style="float:right;" data-bs-toggle="modal" data-bs-target="#borrowModal">
                             Create Borrower 
                         </button>
                     </div>
+                    <div class="col-sm-10"><div id="successMessage" class="alert alert-success" role="alert" style="display: none;"></div>
                 </div>
             </div>
         </div>

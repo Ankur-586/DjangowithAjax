@@ -1,13 +1,11 @@
-import datetime
-import re
 from django.db import models
 from django.utils import timezone
 from Auth.models import MyUser
 import uuid
 from django.core.exceptions import ValidationError
-from datetime import date,timedelta
+from datetime import date,timedelta,datetime
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import JsonResponse
 
 class LibraryCard(models.Model):
     card_number = models.CharField(max_length=20, unique=True)
@@ -53,6 +51,7 @@ class Book(models.Model):
 class Student_Information(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     library_card = models.OneToOneField(LibraryCard, on_delete=models.CASCADE)
+    Penalty = models.CharField(max_length=5,default="No Penalty")
     address = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -68,7 +67,7 @@ class Borrower(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     book_borrower_student = models.ForeignKey(Student_Information, on_delete=models.CASCADE)
     borrow_date = models.DateTimeField(default=timezone.now)
-    due_date = models.DateField()
+    due_date = models.DateTimeField()
     return_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -84,10 +83,20 @@ class Borrower(models.Model):
 
     def set_due_date(self):
         self.due_date = self.borrow_date + timedelta(days=10)
-    
-    # @property
-    # def overdue_fine(self):
-    #     no_of_days = self.due_date - date.today()
+
+def overdue_fine(request,id):
+    current_datetime = timezone.localtime(timezone.now())  # Convert to local time
+    student_info = get_object_or_404(Student_Information,id)
+    borrower = get_object_or_404(Borrower, id)
+    due_date_local = timezone.localtime(borrower.due_date)
+    no_of_days = (current_datetime - due_date_local).days
+    if no_of_days > 0:
+        fine = no_of_days * 10  # Assuming the fine is 10 currency units per day
+    else:
+        fine = 0  # No fine if the book is not overdue
+    penalty = student_info()
+    return fine
+
             
 def save_borrowed_book(request,student_pk, book_pk):
   """

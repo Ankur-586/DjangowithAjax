@@ -10,7 +10,6 @@ $(document).ready(function () {
                 return false; // Exit the loop after showing the first error message
             }
         });
-
         if (allFieldsFilled) {
             var formData = new FormData($('#myForm')[0]);
             $.ajax({
