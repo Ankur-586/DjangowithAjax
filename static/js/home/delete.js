@@ -2,11 +2,8 @@ $(document).ready(function() {
     $('.delete-btn').click(function() {
         // Fetch the borrower ID associated with the clicked button
         var borrowerId = $(this).data('borrower-id');
-        console.log('Borrower ID:', borrowerId);
+        //console.log('Borrower ID:', borrowerId);
         var csrftoken = $('input[name=csrfmiddlewaretoken]')[0].value;
-        var formData = {
-            'csrfmiddlewaretoken': csrftoken,
-        }
          $.ajax({
              url: deleteBookUrl.replace('0', borrowerId),
              headers: {

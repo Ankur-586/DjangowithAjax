@@ -51,7 +51,7 @@ class Book(models.Model):
 class Student_Information(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     library_card = models.OneToOneField(LibraryCard, on_delete=models.CASCADE)
-    Penalty = models.CharField(max_length=5,default="No Penalty")
+    Penalty = models.CharField(max_length=15,default="No Penalty")
     address = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -97,7 +97,7 @@ def late_fine(student_pk):
     student = get_object_or_404(MyUser, pk=student_pk)
     student_info = Student_Information.objects.get(user=student)  # Retrieve Student_Information instance
     borrowings = Borrower.objects.filter(book_borrower_student=student_info) 
-    print(student, student_info, borrowings)
+    # print(student, student_info, borrowings)
     total_fine = 0
     for borrowing in borrowings:
         if borrowing.return_date is None:  # Check if book has not been returned yet
@@ -105,11 +105,14 @@ def late_fine(student_pk):
             borrowing.save()  # Save the changes
         fine = borrowing.overdue_fine()  # Pass the student instance
         total_fine += fine
-        student_info.Penalty = str(total_fine)
-        student_info.save()
+        if total_fine > 0:
+            student_info.Penalty = str(total_fine)
+            student_info.save()
+        else:
+            pass
         response_data = {"total_fine": total_fine}
         return JsonResponse(response_data)
-
+from django.forms.models import model_to_dict
 def save_borrowed_book(request,student_pk, book_pk):
   """
   Saves a new borrower for the given student and book.
@@ -130,7 +133,9 @@ def save_borrowed_book(request,student_pk, book_pk):
     )
     borrower.set_due_date()
     borrower.save()
-    return JsonResponse({'message':'Borrower created Successfully!!'})
+    borrower_data = model_to_dict(borrower)
+    print('borrower_data',borrower_data)
+    return JsonResponse({'message':'Borrower created Successfully!!', 'data': borrower_data})
   except (Book.DoesNotExist, Student_Information.DoesNotExist) as e:
         return JsonResponse({'message': f"Book or Student not found"})
   except Exception as e:
