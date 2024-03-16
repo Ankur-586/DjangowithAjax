@@ -76,6 +76,7 @@
                             <th scope="col">User</th>
                             <th scope="col">Student Id</th>
                             <th scope="col">Library Card</th>
+                            <th scope="col">Penalty (in </th>
                             <th scope="col">Address</th>
                         </tr>
                     </thead>
@@ -86,6 +87,7 @@
                             <th scope="row">{{ bws.user }}</th>
                             <th scope="row">{{ bws.user.id }}</th>
                             <td>{{ bws.library_card }}</td>
+                            <td>{{ bws.Penalty }}</td>
                             <td>{{ bws.address }}</td>
                         </tr>
                         {% endfor %}

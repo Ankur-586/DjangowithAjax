@@ -84,20 +84,32 @@ class Borrower(models.Model):
     def set_due_date(self):
         self.due_date = self.borrow_date + timedelta(days=10)
 
-def overdue_fine(request,id):
-    current_datetime = timezone.localtime(timezone.now())  # Convert to local time
-    student_info = get_object_or_404(Student_Information,id)
-    borrower = get_object_or_404(Borrower, id)
-    due_date_local = timezone.localtime(borrower.due_date)
-    no_of_days = (current_datetime - due_date_local).days
-    if no_of_days > 0:
-        fine = no_of_days * 10  # Assuming the fine is 10 currency units per day
-    else:
-        fine = 0  # No fine if the book is not overdue
-    penalty = student_info()
-    return fine
+    def overdue_fine(self):
+        current_datetime = timezone.localtime(timezone.now())
+        if self.due_date < current_datetime:
+            due_date_local = timezone.localtime(self.due_date)
+            no_of_days = (current_datetime - due_date_local).days
+            fine = max(0, no_of_days * 10)  # Add fine for overdue days (minimum 0)
+            return fine
+        return 0  # No fine if the book is not overdue
+    
+def late_fine(student_pk):
+    student = get_object_or_404(MyUser, pk=student_pk)
+    student_info = Student_Information.objects.get(user=student)  # Retrieve Student_Information instance
+    borrowings = Borrower.objects.filter(book_borrower_student=student_info) 
+    print(student, student_info, borrowings)
+    total_fine = 0
+    for borrowing in borrowings:
+        if borrowing.return_date is None:  # Check if book has not been returned yet
+            borrowing.return_date = datetime.today()  # Set the return_date to the current datetime
+            borrowing.save()  # Save the changes
+        fine = borrowing.overdue_fine()  # Pass the student instance
+        total_fine += fine
+        student_info.Penalty = str(total_fine)
+        student_info.save()
+        response_data = {"total_fine": total_fine}
+        return JsonResponse(response_data)
 
-            
 def save_borrowed_book(request,student_pk, book_pk):
   """
   Saves a new borrower for the given student and book.
@@ -129,3 +141,4 @@ def save_borrowed_book(request,student_pk, book_pk):
 # return date exceed due date then 10 rupee fine perday
 # how to figure out borrow frequency.
 # over_due fine column should be present
+# limit the no of books student can borrow
