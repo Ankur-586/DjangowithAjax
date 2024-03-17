@@ -71,7 +71,7 @@ class Borrower(models.Model):
     return_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    
     def __str__(self):
         return f"Student: {self.book_borrower_student.user} borrowed book: {self.book.title} on Date: {self.borrow_date}"
     
@@ -134,6 +134,7 @@ def save_borrowed_book(request,student_pk, book_pk):
     borrower.set_due_date()
     borrower.save()
     borrower_data = model_to_dict(borrower)
+    borrower_data['user_email'] = borrower.book_borrower_student.user.email
     print('borrower_data',borrower_data)
     return JsonResponse({'message':'Borrower created Successfully!!', 'data': borrower_data})
   except (Book.DoesNotExist, Student_Information.DoesNotExist) as e:

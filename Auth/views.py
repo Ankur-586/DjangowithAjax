@@ -5,6 +5,33 @@ from django.contrib.auth.hashers import make_password
 from django.db import IntegrityError
 from .models import *
 from .forms import *
+from django.db import transaction
+from LibraryManagementSystem.models import LibraryCard, Student_Information
+
+def reg_user(request):
+    if request.method == 'POST':
+        form = AddUser(request.POST)
+        if form.is_valid():
+            try:
+                user = form.save(commit=False)
+                user.password = make_password(form.cleaned_data['password1'])
+                user.save()
+                return JsonResponse({'message': 'Registration successful!'})
+            except IntegrityError:
+                return JsonResponse({'errors': {'email': ['Username already exists.']}}, status=400)
+            except Exception as e:
+                print(f"Registration error: {e}")
+                return HttpResponseServerError('Internal server error.')
+        else:
+            # Extract form errors with more descriptive messages
+            form_errors = {field: form.errors[field] for field in form.errors}
+            return JsonResponse({'errors': form.errors}, status=400)
+    else:
+        form = AddUser()
+    return render(request, 'Auth/add_user.html', {'form': form})
+
+
+
 
 # def reg_user(request):
 #     if request.method == 'POST':
@@ -31,26 +58,3 @@ from .forms import *
 #     else:
 #         form = AddUser()
 #     return render(request, 'Auth/add_user.html', {'form': form})
-
-def reg_user(request):
-    if request.method == 'POST':
-        form = AddUser(request.POST)
-        if form.is_valid():
-            try:
-                user = form.save(commit=False)
-                user.password = make_password(form.cleaned_data['password1'])
-                user.save()
-                return JsonResponse({'message': 'Registration successful!'})
-            except IntegrityError:
-                return JsonResponse({'errors': {'email': ['Username already exists.']}}, status=400)
-            except Exception as e:
-                print(f"Registration error: {e}")
-                return HttpResponseServerError('Internal server error.')
-        else:
-            # Extract form errors with more descriptive messages
-            form_errors = {field: form.errors[field] for field in form.errors}
-            return JsonResponse({'errors': form.errors}, status=400)
-    else:
-        form = AddUser(initial={"email": None})
-    return render(request, 'Auth/add_user.html', {'form': form})
-

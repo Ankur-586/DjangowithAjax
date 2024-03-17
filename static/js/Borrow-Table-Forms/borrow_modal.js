@@ -26,12 +26,13 @@ $(document).ready(function() {
     });
 
     function updatePage(data) {
+        console.log(data)
         // Construct the HTML for the new table row using the received data
         var newRow = '<tr>' +
                         '<td>' + data.id + '</td>' + // Borrower ID
                         '<td>' + data.book.title + '</td>' + // Book Title
                         '<td>' + data.book.id + '</td>' + // Book ID
-                        '<td>' + data.book_borrower_student.student.user.email + '</td>' + // Student Email
+                        '<td>' + data.book_borrower_student.user_email + '</td>' + // Student Email
                         '<td>' + data.book_borrower_student.id + '</td>' + // Student ID
                         '<td>' + data.borrow_date + '</td>' + // Borrow Date
                         '<td>' + data.due_date + '</td>' + // Due Date

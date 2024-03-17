@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractBaseUser,PermissionsMixin
 from Auth.manager import MyUserManager
 
 class MyUser(AbstractBaseUser,PermissionsMixin):
-
     ADMIN = 1
     STAFF = 2
     STUDENT = 3
@@ -59,3 +58,4 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+    
