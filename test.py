@@ -28,5 +28,13 @@ containers in the HTML form with the appropriate error messages for each field.
 # $.each(errors, function(field, messages) {
 #     $('#' + field + '_errors').text(messages.join(' '));
 # });
-from datetime import date
-print(date.today())
+import datetime
+import random
+def library_card():
+    fixed_number = '1nh'
+    today = datetime.date.today()
+    year = today.strftime("%Y")[2:]
+    branch = 'is'
+    random_number = random.randint(111,999)
+    library_card_number = fixed_number + str(year) + branch + str(random_number)
+    print(library_card_number)

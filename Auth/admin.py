@@ -52,7 +52,7 @@ class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
     add_form = UserCreationForm
-
+    readonly_fields = ["created_at","updated_at"]
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
@@ -60,7 +60,7 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ["role", "is_admin"]  # <-- Add role to list_filter
     fieldsets = [
         (None, {"fields": ["email", "password"]}),
-        ("Personal info", {"fields": ["first_name", "last_name", "role"]}),
+        ("Personal info", {"fields": ["first_name", "last_name", "role","created_at","updated_at"]}),
         ("Permissions", {"fields": ["is_admin"]}),
     ]
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
@@ -70,7 +70,7 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 "classes": ["wide"],
-                "fields": ["email", "first_name", "last_name", "role", "password1", "password2"],
+                "fields": ["email", "first_name", "last_name", "role", "password1", "password2","created_at","updated_at"], 
             },
         ),
     ]

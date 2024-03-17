@@ -1,11 +1,12 @@
 from django.db import models
 from django.utils import timezone
 from Auth.models import MyUser
-import uuid
-from django.core.exceptions import ValidationError
 from datetime import date,timedelta,datetime
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
+import datetime
+import random
+from datetime import datetime
 
 class LibraryCard(models.Model):
     card_number = models.CharField(max_length=20, unique=True)
@@ -14,17 +15,15 @@ class LibraryCard(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)  
     updated_at = models.DateTimeField(auto_now=True)
-
-    def save(self, *args, **kwargs):
-        if not self.card_number:  # Generate card number only if not provided
-            self.card_number = str(uuid.uuid4())[:20]  # Generate a UUID and truncate to 20 characters
-        if not self.card_number:
-            raise ValidationError("Please provide a card number.")
-        super().save(*args, **kwargs)
     
     def __str__(self):
         return self.card_number
     
+def generate_library_card(prefix='1nh', branch='is', random_length=3):
+    year = str(datetime.date.today().year)[2:]
+    random_number = ''.join(str(random.randint(0, 9)) for _ in range(random_length))
+    library_card_number = f"{prefix}{year}{branch}{random_number}"
+    return library_card_number
 
 class Author(models.Model):
     name = models.CharField(max_length=100)
@@ -49,8 +48,23 @@ class Book(models.Model):
         return self.title
 
 class Student_Information(models.Model):
+    NO_DEFAULT = 1
+    IT = 2
+    CS = 3
+    ME = 4
+    EE = 5
+    
+    ROLE_CHOICES = (
+      (NO_DEFAULT, 'No Default'),
+      (IT, 'Information Technology'),
+      (CS, 'Computer Science'),
+      (ME,'Machenical Engineering'),
+      (EE,'Electrical Engineering'),
+    )
+
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     library_card = models.OneToOneField(LibraryCard, on_delete=models.CASCADE)
+    branch = models.PositiveSmallIntegerField(choices=ROLE_CHOICES,default=NO_DEFAULT)
     Penalty = models.CharField(max_length=15,default="No Penalty")
     address = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
