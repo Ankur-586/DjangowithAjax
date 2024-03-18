@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-5_$0oo6mk7k4&oxfa1!ls^)t^hh90zq+%0k4wmzce3kl4yooxp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -83,6 +83,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+#     'default': {
+#     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#     'NAME': '',
+#     'USER': 'postgres',
+#     'PASSWORD': 'intex123',
+#     'HOST': 'testdatabase.ch4kaaqeeq41.ap-south-1.rds.amazonaws.com',
+#     'PORT': '5432',
+#   }
 }
 
 
