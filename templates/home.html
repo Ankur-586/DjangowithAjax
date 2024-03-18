@@ -19,7 +19,7 @@
         </ul>
         <div class="tab-content">
             <div id="tab1" class="tab-pane fade show active">
-                <table class="table table-dark table-bordered">
+                <table class="table table-dark table-bordered text-center">
                     <thead>
                         <tr>
                             <th scope="col">Id</th>
@@ -112,6 +112,7 @@
                             <th scope="col">Return Date</th>
                             <th scope="col">Created At</th>
                             <th scope="col">Updated At</th>
+                            <th scope="col">Return Book</th>
                             <th scope="col">Delete</th>
                         </tr>
                     </thead>
@@ -129,6 +130,10 @@
                             <td>{{ borrow.return_date }}</td>
                             <td>{{ borrow.created_at }}</td>
                             <td>{{ borrow.updated_at }}</td>
+                            <td>
+                                <button type='button' class='btn btn-secondary' data-bs-toggle="modal" data-bs-target="#returnModal" 
+                                data-student-id="{{ borrow.book_borrower_student.user.id }}" data-return-date="{{ borrow.return_date }}">Return Book</button>
+                            </td>
                             <td><button type='button' class="btn btn-secondary delete-btn" data-borrower-id="{{ borrow.id }}">Delete</button></td>
                         </tr>
                         {% endfor %}
@@ -148,7 +153,8 @@
     </div>
 
     <!-- Includes Bootstrap Modal -->
-    {% include 'Create_borrower/borrower.html' %}
+    {% include 'LibraryManagementSystem/borrower.html' %}
+    {% include 'LibraryManagementSystem/return.html' %}
     <!-- Comment Close -->
     
 {% endblock content %}

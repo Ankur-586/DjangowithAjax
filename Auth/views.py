@@ -2,24 +2,23 @@ from django.shortcuts import render
 from django.http import JsonResponse,HttpResponseServerError
 from django.contrib.auth.hashers import make_password
 from django.db import IntegrityError
-
-from test import library_card
 from .models import *
 from .forms import *
 from django.db import transaction
 from LibraryManagementSystem.models import LibraryCard, Student_Information,generate_library_card
+from datetime import date,timedelta
 import datetime
 
-@transaction.atomic
 def reg_user(request):
     if request.method == 'POST':
         form = AddUser(request.POST)
         if form.is_valid():
             try:
-                user = form.save(commit=False)
-                user.password = make_password(form.cleaned_data['password1'])
-                user.save()
-                # lib_card(user)
+                with transaction.atomic():
+                    user = form.save(commit=False)
+                    user.password = make_password(form.cleaned_data['password1'])
+                    user.save()
+                    lib_card(user)
                 return JsonResponse({'message': 'Registration successful!'})
             except IntegrityError:
                 return JsonResponse({'errors': {'email': ['Username already exists.']}}, status=400)
@@ -34,18 +33,31 @@ def reg_user(request):
         form = AddUser()
     return render(request, 'Auth/add_user.html', {'form': form})
 
-@transaction.atomic
 def lib_card(user):
-    library_card = LibraryCard(
-        card_number = generate_library_card(),
-        issued_date = datetime.today(),
-        expiration_date = date.today() + timedelta(days=365*4),
-        user = 'fs@gmail.com',
-    )
-    library_card.save()
+    try:
+        library_card = LibraryCard(
+            card_number=generate_library_card(),
+            issued_date=datetime.date.today(),
+            expiration_date=datetime.date.today() + datetime.timedelta(days=365*4),
+            user=user,
+        )
+        library_card.save()
+    except Exception as e:
+        print(f"Library card creation error: {e}")
+        raise
     
-
-
+def student_information(user,lib_card):
+    try:
+        library_card = LibraryCard(
+            user = user,
+            library_card = lib_card,
+            issued_date=datetime.date.today(),
+            expiration_date=datetime.date.today() + datetime.timedelta(days=365*4),
+        )
+        library_card.save()
+    except Exception as e:
+        print(f"Library card creation error: {e}")
+        raise
 
 # def reg_user(request):
 #     if request.method == 'POST':

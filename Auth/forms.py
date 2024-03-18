@@ -42,3 +42,4 @@ class AddUser(ModelForm):
         if validate_email(data):
             raise forms.ValidationError("Enter a Valid Email Address now")
         return data
+    

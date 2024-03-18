@@ -23,18 +23,7 @@ So, essentially, this code iterates over the error messages received from the se
 containers in the HTML form with the appropriate error messages for each field.
 '''
 
-# error: function(xhr, status, error) {
-# var errors = xhr.responseJSON.errors;
-# $.each(errors, function(field, messages) {
-#     $('#' + field + '_errors').text(messages.join(' '));
-# });
-import datetime
-import random
-def library_card():
-    fixed_number = '1nh'
-    today = datetime.date.today()
-    year = today.strftime("%Y")[2:]
-    branch = 'is'
-    random_number = random.randint(111,999)
-    library_card_number = fixed_number + str(year) + branch + str(random_number)
-    print(library_card_number)
+import requests
+
+url = requests.get('https://vaaradhi.agrani.tech/api/v1/onboarding/farmers/4a373885-ed6e-4a0d-b77d-346b19ae5929')
+print(url)

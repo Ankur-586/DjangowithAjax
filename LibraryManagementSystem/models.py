@@ -1,12 +1,11 @@
 from django.db import models
 from django.utils import timezone
 from Auth.models import MyUser
-from datetime import date,timedelta,datetime
+from datetime import date, timedelta, datetime as dt
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-import datetime
-import random
-from datetime import datetime
+import datetime, random
+from django.forms.models import model_to_dict
 
 class LibraryCard(models.Model):
     card_number = models.CharField(max_length=20, unique=True)
@@ -18,7 +17,7 @@ class LibraryCard(models.Model):
     
     def __str__(self):
         return self.card_number
-    
+
 def generate_library_card(prefix='1nh', branch='is', random_length=3):
     year = str(datetime.date.today().year)[2:]
     random_number = ''.join(str(random.randint(0, 9)) for _ in range(random_length))
@@ -108,6 +107,9 @@ class Borrower(models.Model):
         return 0  # No fine if the book is not overdue
     
 def late_fine(student_pk):
+    """
+    This View Is connected with daj
+    """
     student = get_object_or_404(MyUser, pk=student_pk)
     student_info = Student_Information.objects.get(user=student)  # Retrieve Student_Information instance
     borrowings = Borrower.objects.filter(book_borrower_student=student_info) 
@@ -115,7 +117,7 @@ def late_fine(student_pk):
     total_fine = 0
     for borrowing in borrowings:
         if borrowing.return_date is None:  # Check if book has not been returned yet
-            borrowing.return_date = datetime.today()  # Set the return_date to the current datetime
+            borrowing.return_date = dt.today()  # Set the return_date to the current datetime
             borrowing.save()  # Save the changes
         fine = borrowing.overdue_fine()  # Pass the student instance
         total_fine += fine
@@ -126,7 +128,7 @@ def late_fine(student_pk):
             pass
         response_data = {"total_fine": total_fine}
         return JsonResponse(response_data)
-from django.forms.models import model_to_dict
+
 def save_borrowed_book(request,student_pk, book_pk):
   """
   Saves a new borrower for the given student and book.
