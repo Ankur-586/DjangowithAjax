@@ -1,65 +1,94 @@
-  {% load static %}
-  <!-- Modal -->
-  <div class="modal fade" id="returnModal" role="dialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div id="lateFineContent">
-                        </div>
-                    </div>
-                </div>
-                <div class="row mt-3" style="float: left;margin-left: 50%;">
-                    <div class="col-md-12">
-                        <label for="returnDate" class="form-label">Return Date:</label>
-                        <input type="date" id="returnDate" name="returnDate" class="form-control">
-                    </div>
-                </div>
+{% load static %}
+<!-- Modal -->
+<div class="modal fade" id="returnModal" role="dialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div id="lateFineContent"></div>
             </div>
+          </div>
+          <form method="post">
+            {% csrf_token %}
+            <div class="row mt-3">
+              <div class="col-md-6" id="student-id">
+                <label for="returnDate" class="form-label">Return Date:</label>
+                <input type="datetime-local" id="returnDate" name="returnDate" class="form-control returnDate">
+              </div>
+            </div>
+          </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary return-btn">Save changes</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" id="return_date" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
+</div>
+<div class="col-sm-10">
+  <div id="successMessage" class="alert alert-success" role="alert" style="display:none;height:70%;"></div>
+</div>
 
-  <script>
-    /* $(document).ready(function() {
-        $('#returnModal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var studentId = button.data('student-id'); // Extract info from data-* attributes
-            var modal = $(this);
-            modal.find('.modal-body').html('Student ID: ' + studentId);
-            console.log(studentId)
-        });
-    }); */
+<script>
+  $(document).ready(function() {
+    $('#returnModal').on('show.bs.modal', function(event) {
+      var button = $(event.relatedTarget);
+      var studentId = button.data('student-id');
+      var returnDate = button.data('return-date');
+      console.log(studentId, returnDate);
 
-    $(document).ready(function() {
-        $('#returnModal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var studentId = button.data('student-id'); // Extract student ID from data attribute
-            var return_date = button.data('return-date');
-            console.log(return_date)
-            // Assuming you're using AJAX to call the Django view
-            $.ajax({
-                url: "{% url 'fine' 0 %}".replace('0', studentId), //'/path/to/late_fine/' + studentId + '/',
-                method: 'GET',
-                success: function(response) {
-                    $('#lateFineContent').html('Total Fine: ' + response.total_fine);
-                    $('#returnDate').html('Return Date: ' + return_date);
-                },
-                error: function(xhr, status, error) {
-                    console.error(error);
-                }
-            });
-        });
+      // Fetch CSRF token
+      var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
+      // Fetch late fine information
+      $.ajax({
+        url: "{% url 'fine' 0 %}".replace('0', studentId),
+        method: 'GET',
+        headers: { "X-CSRFToken": csrftoken },
+        success: function(response) {
+          console.log('get ajax', response)
+          if (response && response.late_penalty !== undefined) {
+            $('#lateFineContent').html('Total Fine: ' + response.late_penalty);
+          } else {
+            $('#lateFineContent').html('Total Fine: ' + response.late_penalty);
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+          $('#lateFineContent').html('Total Fine: Error');
+        }
+      });
     });
+
+    // Handle form submission
+    $('#return_date').submit(function(e) {
+      e.preventDefault(); // Prevent default form submission
+
+      var form = $(this);
+      var formData = form.serialize(); // Serialize form data
+    console.log('FORMDATA:',formData)
+      // Send the return date to the Django view
+      $.ajax({
+        url: "{% url 'fine' 0 %}".replace('0',studentId),
+        method: 'POST', // Ensure that the method is set to POST
+        headers: { "X-CSRFToken": csrftoken }, // Include CSRF token in headers
+        data: formData,
+        success: function(response) {
+            console.log('Return successful');
+            $('#successMessage').text(response.message).show().delay(2000).fadeOut('slow');
+            $('#returnModal').modal('hide');
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+            // Optionally, you can handle error messages or further actions here
+        }
+    });
+    });
+  });
 </script>

@@ -1,5 +1,7 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseNotFound
 from django.shortcuts import render
+
+from LibraryManagementSystem.forms import return_date
 from .models import *
 
 def home(request):
@@ -19,9 +21,24 @@ def borrow_book(request, student_pk, book_pk):
     borrower = save_borrowed_book(request, student_pk, book_pk)
     return borrower
 
-def book_return(request,student_pk):
-    late_penalty = late_fine(student_pk)
-    return late_penalty
+def book_return(request, student_pk):
+    # late_penalty = late_fine(student_pk)
+    # return JsonResponse({'success': True, 'message': 'Return successful', 'late_penalty': late_penalty})
+    # if request.method == 'POST':
+    try:
+        return_date = request.POST.get("return-date")
+        borrower = Borrower.objects.filter(pk=student_pk, return_date__isnull=True).first()
+        print(borrower, 'Date:',return_date) 
+        if borrower:
+            borrower.return_date = return_date
+            borrower.save()
+            late_penalty = late_fine(student_pk)  # Replace with your late_fine function logic
+            return JsonResponse({'success': True, 'message': 'Return successful', 'late_penalty': late_penalty})
+        else:
+            return JsonResponse({'success': False, 'message': 'No active borrowings found for the student'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
 
 def delete(request, id):
   member = Borrower.objects.get(id=id)

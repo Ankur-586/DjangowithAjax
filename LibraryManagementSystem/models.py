@@ -116,18 +116,17 @@ def late_fine(student_pk):
     # print(student, student_info, borrowings)
     total_fine = 0
     for borrowing in borrowings:
-        if borrowing.return_date is None:  # Check if book has not been returned yet
-            borrowing.return_date = dt.today()  # Set the return_date to the current datetime
-            borrowing.save()  # Save the changes
+        # if borrowing.return_date is None:  # Check if book has not been returned yet
+        #     borrowing.return_date = dt.today()  # Set the return_date to the current datetime
+        #     borrowing.save()  # Save the changes
         fine = borrowing.overdue_fine()  # Pass the student instance
         total_fine += fine
         if total_fine > 0:
             student_info.Penalty = str(total_fine)
-            student_info.save()
+            # student_info.save()
+            return total_fine
         else:
-            pass
-        response_data = {"total_fine": total_fine}
-        return JsonResponse(response_data)
+            return 'No Fine Amount !!'
 
 def save_borrowed_book(request,student_pk, book_pk):
   """
