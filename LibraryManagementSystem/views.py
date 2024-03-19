@@ -1,8 +1,7 @@
-from django.http import JsonResponse, HttpResponseNotFound
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render
-
-from LibraryManagementSystem.forms import return_date
 from .models import *
+from django.db.models import Q
 
 def home(request):
     library_card = LibraryCard.objects.all()
@@ -22,22 +21,40 @@ def borrow_book(request, student_pk, book_pk):
     return borrower
 
 def book_return(request, student_pk):
-    # late_penalty = late_fine(student_pk)
-    # return JsonResponse({'success': True, 'message': 'Return successful', 'late_penalty': late_penalty})
-    # if request.method == 'POST':
-    try:
-        return_date = request.POST.get("return-date")
+    if request.method == 'GET':
+        late_penalty = late_fine(student_pk)  # Replace with your late_fine function logic
+        return JsonResponse({'late_penalty': late_penalty})  # Example response
+    elif request.method == 'POST':
+        return_date_str = request.POST.get('returnDate')
+        if not return_date_str:
+            return HttpResponseBadRequest("Return date is required.")
+        
+        return_date = timezone.datetime.strptime(return_date_str, "%Y-%m-%dT%H:%M")  # Parse the return date string
         borrower = Borrower.objects.filter(pk=student_pk, return_date__isnull=True).first()
-        print(borrower, 'Date:',return_date) 
         if borrower:
             borrower.return_date = return_date
             borrower.save()
             late_penalty = late_fine(student_pk)  # Replace with your late_fine function logic
             return JsonResponse({'success': True, 'message': 'Return successful', 'late_penalty': late_penalty})
         else:
-            return JsonResponse({'success': False, 'message': 'No active borrowings found for the student'})
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)})
+            return JsonResponse({'success': False, 'message': 'Borrower not found or book already returned.'})
+    else:
+        return JsonResponse({'error': 'Invalid request method.'})
+
+    # if request.method == 'POST':
+    # try:
+    #     return_date = request.POST.get("returnDate")
+    #     borrower = Borrower.objects.filter(Q(pk=student_pk) & Q(return_date__isnull=True))
+    #     print(borrower, 'Date:',return_date) 
+    #     if borrower:
+    #         borrower.return_date = return_date
+    #         borrower.save()
+    #         late_penalty = late_fine(student_pk)  # Replace with your late_fine function logic
+    #         return JsonResponse({'success': True, 'message': 'Return successful', 'late_penalty': late_penalty})
+    #     else:
+    #         return JsonResponse({'success': False, 'message': 'No active borrowings found for the student'})
+    # except Exception as e:
+    #     return JsonResponse({'success': False, 'message': str(e)})
 
 
 def delete(request, id):

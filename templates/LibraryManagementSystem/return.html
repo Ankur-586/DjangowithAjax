@@ -36,59 +36,10 @@
   <div id="successMessage" class="alert alert-success" role="alert" style="display:none;height:70%;"></div>
 </div>
 
+{% block script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
-  $(document).ready(function() {
-    $('#returnModal').on('show.bs.modal', function(event) {
-      var button = $(event.relatedTarget);
-      var studentId = button.data('student-id');
-      var returnDate = button.data('return-date');
-      console.log(studentId, returnDate);
-
-      // Fetch CSRF token
-      var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
-      // Fetch late fine information
-      $.ajax({
-        url: "{% url 'fine' 0 %}".replace('0', studentId),
-        method: 'GET',
-        headers: { "X-CSRFToken": csrftoken },
-        success: function(response) {
-          console.log('get ajax', response)
-          if (response && response.late_penalty !== undefined) {
-            $('#lateFineContent').html('Total Fine: ' + response.late_penalty);
-          } else {
-            $('#lateFineContent').html('Total Fine: ' + response.late_penalty);
-          }
-        },
-        error: function(xhr, status, error) {
-          console.error(error);
-          $('#lateFineContent').html('Total Fine: Error');
-        }
-      });
-    });
-
-    // Handle form submission
-    $('#return_date').submit(function(e) {
-      e.preventDefault(); // Prevent default form submission
-
-      var form = $(this);
-      var formData = form.serialize(); // Serialize form data
-    console.log('FORMDATA:',formData)
-      // Send the return date to the Django view
-      $.ajax({
-        url: "{% url 'fine' 0 %}".replace('0',studentId),
-        method: 'POST', // Ensure that the method is set to POST
-        headers: { "X-CSRFToken": csrftoken }, // Include CSRF token in headers
-        data: formData,
-        success: function(response) {
-            console.log('Return successful');
-            $('#successMessage').text(response.message).show().delay(2000).fadeOut('slow');
-            $('#returnModal').modal('hide');
-        },
-        error: function(xhr, status, error) {
-            console.error(error);
-            // Optionally, you can handle error messages or further actions here
-        }
-    });
-    });
-  });
+    var returnbookUrl = "{% url 'fine' 0 %}";
 </script>
+<script src="{% static 'js/Modal-Forms/return_book.js' %}"></script>
+{% endblock %}

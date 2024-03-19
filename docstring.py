@@ -27,40 +27,70 @@ import requests
 
 url = requests.get('https://vaaradhi.agrani.tech/api/v1/onboarding/farmers/4a373885-ed6e-4a0d-b77d-346b19ae5929')
 
-<form method="post" id="returnForm"> <!-- Add id to the form -->
-            {% csrf_token %}
-            <div class="row mt-3">
-                <div class="col-md-6" id="student-id">
-                    <label for="returnDate" class="form-label">Return Date:</label>
-                    <input type="datetime-local" id="returnDate" name="returnDate" class="form-control returnDate">
-                </div>
-            </div>
-        </form>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary return_date">Save changes</button>
-$('#returnForm').submit(function(e) {
-        e.preventDefault(); // Prevent default form submission
+''' Do not delete
+$(document).ready(function() {
+    var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
+    var studentId;
+    var returnDate;
+    
+    $('#returnModal').on('show.bs.modal', function(event) {
+      var button = $(event.relatedTarget);
+      var studentId = button.data('student-id');
+      var returnDate = button.data('return-date');
+      console.log(studentId, returnDate);
 
-        var formData = $(this).serialize(); // Serialize form data
-        console.log('FORMDATA:', formData);
+      // Fetch CSRF token
+      var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
+      // Fetch late fine information
+      $.ajax({
+        url: "{% url 'fine' 0 %}".replace('0', studentId),
+        method: 'GET',
+        headers: { "X-CSRFToken": csrftoken },
+        success: function(response) {
+          console.log('get ajax', response)
+          if (response && response.late_penalty !== undefined) {
+            $('#lateFineContent').html('Total Fine: ' + response.late_penalty);
+          } else {
+            $('#lateFineContent').html('Total Fine: ' + response.late_penalty);
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+          $('#lateFineContent').html('Total Fine: Error');
+        }
+      });
 
-        // Send the return date to the Django view
-        $.ajax({
-            url: "{% url 'fine' 0 %}".replace('0', studentId),
-            method: 'POST',
-            headers: { "X-CSRFToken": csrftoken },
-            data: formData,
-            success: function(response) {
-                console.log('Return successful',response);
-                $('#successMessage').text(response.message).show().delay(2000).fadeOut('slow');
-                $('#returnModal').modal('hide');
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-                // Optionally, you can handle error messages or further actions here
-            }
-        });
+    // Handle form submission
+    $('#return_date').click(function(event) {
+      // Retrieve the return date from the input field
+      var returnDate = $('#returnDate').val();
+      console.log(returnDate); // Check if the value is retrieved correctly
+      //var studentId = $(this).data('data-student-id');
+      //console.log('tr',studentId)
+      // Close the modal
+      //$('#returnModal').modal('hide');
+
+      // Send AJAX request to the Django view
+      $.ajax({
+          url: "{% url 'fine' 0 %}".replace('0', studentId),
+          type: 'POST',
+          headers: { "X-CSRFToken": csrftoken },
+          data: {
+              'returnDate': returnDate // Include returnDate in the data
+          },
+          success: function(response) {
+              // Display success message
+              $('#successMessage').text(response.message);
+              $('#successMessage').show().delay(2000).fadeOut('slow');
+          },
+          error: function(xhr, status, error) {
+              // Display error message
+              console.error("Error:", error);
+              $('#successMessage').text("An error occurred while processing the request");
+              $('#successMessage').show().delay(2000).fadeOut('slow');
+          }
+      });
     });
+  });
+  });
+  '''
