@@ -19,5 +19,5 @@ admin.site.register(Student_Information,Student_InformationAdmin)
 
 class BorrowerAdmin(admin.ModelAdmin):
     filter_horizontal = ('books',)
-    list_display = ['book_borrower_student','borrow_date','due_date','return_date','created_at','updated_at']
+    list_display = ['book_borrower_student','display_book','borrow_date','due_date','return_date','created_at','updated_at']
 admin.site.register(Borrower,BorrowerAdmin)

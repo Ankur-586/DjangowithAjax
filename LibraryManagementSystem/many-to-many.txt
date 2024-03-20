@@ -27,3 +27,16 @@ class BorrowedBookAdmin(admin.ModelAdmin):
     list_display = ('borrower', 'book', 'created_at', 'updated_at',)
     readonly_fields = ('created_at', 'updated_at',)
 admin.site.register(BorrowedBook, BorrowedBookAdmin)
+
+<td>
+    {% for book in borrow.books.all %}
+        {{ book.title }}
+        {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</td>
+<td>
+    {% for book in borrow.books.all %}
+        {{ book.id }}
+        {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</td>

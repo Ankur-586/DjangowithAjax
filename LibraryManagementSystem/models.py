@@ -84,9 +84,13 @@ class Borrower(models.Model):
     return_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def display_book(self):
+        return ','.join([str(book) for book in self.books.all()])
     
     def __str__(self):
-         return f"Student: {self.book_borrower_student.user} borrowed books on Date: {self.borrow_date}"
+        return self.display_book
     
     @property
     def is_overdue(self):
