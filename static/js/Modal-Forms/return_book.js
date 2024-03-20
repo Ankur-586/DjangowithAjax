@@ -5,12 +5,13 @@ $(document).ready(function() {
       var button = $(event.relatedTarget);
       var studentId = button.data('student-id');
       var returnDate = button.data('return-date');
-
+      var borrow_id = button.data('borrow-id')
+      console.log(borrow_id)
       // Fetch CSRF token
-      var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
+      // var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
       // Fetch late fine information
       $.ajax({
-        url: returnbookUrl.replace('0', studentId),
+        url: returnbookUrl.replace('0', studentId).replace('0', borrow_id),
         method: 'GET',
         headers: { "X-CSRFToken": csrftoken },
         success: function(response) {
@@ -37,7 +38,7 @@ $(document).ready(function() {
 
       // Send AJAX request to the Django view
       $.ajax({
-          url: returnbookUrl.replace('0', studentId),
+          url: returnbookUrl.replace('0', studentId).replace('0', borrow_id),
           type: 'POST',
           headers: { "X-CSRFToken": csrftoken },
           data: {
@@ -47,7 +48,7 @@ $(document).ready(function() {
               // Display success message
               $('#successMessage').text(response.message);
               $('#successMessage').show().delay(2000).fadeOut('slow');
-              $('#returnModal').modal('hide');
+              // $('#returnModal').modal('hide');
           },
           error: function(xhr, status, error) {
               // Display error message

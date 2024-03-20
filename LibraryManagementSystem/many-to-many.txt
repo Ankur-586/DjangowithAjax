@@ -1,0 +1,29 @@
+class Borrower(models.Model):
+    books = models.ManyToManyField('Book', through='BorrowedBook')
+    book_borrower_student = models.ForeignKey(Student_Information, on_delete=models.CASCADE)
+    borrow_date = models.DateTimeField(default=timezone.now)
+    due_date = models.DateTimeField()
+    return_date = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+         return f"Student: {self.book_borrower_student.user} borrowed books on Date: {self.borrow_date}"
+
+class BorrowedBook(models.Model):
+    borrower = models.ForeignKey(Borrower, on_delete=models.CASCADE)
+    book = models.ForeignKey('Book', on_delete=models.CASCADE)
+    # Add any other fields related to the borrowing of the book, if needed
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class BorrowerAdmin(admin.ModelAdmin):
+    list_display = ('book_borrower_student', 'borrow_date', 'due_date', 'return_date','created_at','updated_at')
+    readonly_fields = ('created_at', 'updated_at',)
+admin.site.register(Borrower, BorrowerAdmin)
+
+# Customize the BorrowedBook admin interface
+class BorrowedBookAdmin(admin.ModelAdmin):
+    list_display = ('borrower', 'book', 'created_at', 'updated_at',)
+    readonly_fields = ('created_at', 'updated_at',)
+admin.site.register(BorrowedBook, BorrowedBookAdmin)

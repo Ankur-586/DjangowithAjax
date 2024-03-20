@@ -121,8 +121,8 @@
                         <tr>
                             <tr id="borrowerRow_{{ borrow.id }}">
                             <th scope="row">{{ borrow.id }}</th>
-                            <td>{{ borrow.book.title }}</td>
-                            <td>{{ borrow.book.id }}</td>
+                            <td>{{ borrow.books }}</td>
+                            <td>{{ borrow.books }}</td>
                             <td>{{ borrow.book_borrower_student }}</td>
                             <th scope="row">{{ borrow.book_borrower_student.user.id }}</th>
                             <td>{{  borrow.borrow_date }}</td>
@@ -132,7 +132,8 @@
                             <td>{{ borrow.updated_at }}</td>
                             <td>
                                 <button type='button' class='btn btn-secondary' data-bs-toggle="modal" data-bs-target="#returnModal" 
-                                data-student-id="{{ borrow.book_borrower_student.user.id }}" data-return-date="{{ borrow.return_date }}">Return Book</button>
+                                data-student-id="{{ borrow.book_borrower_student.user.id }}" data-return-date="{{ borrow.return_date }}" 
+                                data-borrow-id="{{ borrow.id }}">Return Book</button>
                             </td>
                             <td><button type='button' class="btn btn-secondary delete-btn" data-borrower-id="{{ borrow.id }}">Delete</button></td>
                         </tr>

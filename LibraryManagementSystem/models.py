@@ -77,7 +77,7 @@ class Student_Information(models.Model):
         verbose_name_plural = 'Student_Information'
 
 class Borrower(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    books = models.ManyToManyField(Book)
     book_borrower_student = models.ForeignKey(Student_Information, on_delete=models.CASCADE)
     borrow_date = models.DateTimeField(default=timezone.now)
     due_date = models.DateTimeField()
@@ -86,7 +86,7 @@ class Borrower(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f"Student: {self.book_borrower_student.user} borrowed book: {self.book.title} on Date: {self.borrow_date}"
+         return f"Student: {self.book_borrower_student.user} borrowed books on Date: {self.borrow_date}"
     
     @property
     def is_overdue(self):
@@ -97,36 +97,44 @@ class Borrower(models.Model):
     def set_due_date(self):
         self.due_date = self.borrow_date + timedelta(days=10)
 
-    def overdue_fine(self):
+    def overdue_fine(self,student_pk,borrow_id):
         current_datetime = timezone.localtime(timezone.now())
-        if self.due_date < current_datetime:
-            due_date_local = timezone.localtime(self.due_date)
+    
+    # Get the borrowing by ID
+        borrowing = get_object_or_404(Borrower, id=borrow_id)
+        
+        # Ensure the borrowing is associated with the specified student
+        if borrowing.book_borrower_student != student_pk:
+            # The borrowing does not belong to the specified student
+            return "This borrowing does not belong to the specified student."
+        
+        # Calculate overdue fine if the borrowing is overdue
+        if borrowing.return_date is None and borrowing.due_date < current_datetime:
+            due_date_local = timezone.localtime(borrowing.due_date)
             no_of_days = (current_datetime - due_date_local).days
             fine = max(0, no_of_days * 10)  # Add fine for overdue days (minimum 0)
             return fine
-        return 0  # No fine if the book is not overdue
+        else:
+            # The borrowing is not overdue
+            return 0
     
-def late_fine(student_pk):
+def late_fine(student_pk,borrow_id):
     """
     This View Is connected with daj
     """
     student = get_object_or_404(MyUser, pk=student_pk)
     student_info = Student_Information.objects.get(user=student)  # Retrieve Student_Information instance
     borrowings = Borrower.objects.filter(book_borrower_student=student_info) 
-    # print(student, student_info, borrowings)
     total_fine = 0
     for borrowing in borrowings:
-        # if borrowing.return_date is None:  # Check if book has not been returned yet
-        #     borrowing.return_date = dt.today()  # Set the return_date to the current datetime
-        #     borrowing.save()  # Save the changes
-        fine = borrowing.overdue_fine()  # Pass the student instance
+        fine = borrowing.overdue_fine(student_pk,borrow_id)  # Calculate fine for each borrowing
         total_fine += fine
-        if total_fine > 0:
-            student_info.Penalty = str(total_fine)
-            # student_info.save()
-            return total_fine
-        else:
-            return 'No Fine Amount !!'
+    if total_fine > 0:
+        student_info.Penalty = str(total_fine)
+        # student_info.save()  # Uncomment this line if you want to update the student's fine in the database
+        return total_fine
+    else:
+        return 'No Fine Amount !!'
 
 def save_borrowed_book(request,student_pk, book_pk):
   """
@@ -157,6 +165,8 @@ def save_borrowed_book(request,student_pk, book_pk):
   except Exception as e:
     print(f"Unexpected error saving borrower: {e}")
     return JsonResponse({'message': f"{e}"})
+
+
 
 # if a book is gettign borrowed frequently then its due date is in 5 days or else 10 days
 # return date exceed due date then 10 rupee fine perday

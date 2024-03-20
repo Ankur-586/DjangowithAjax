@@ -7,13 +7,16 @@ pip freeze > requirements.txt
 bootstrap-5
 pip install django-bootstrap-v5
 
-
+python .\manage.py dbshell
 -----------------------------------------------------------------------------------------------
 What Is Model Inheritance in Django?
 https://www.makeuseof.com/django-model-inheritance/
 
 How To Set Up Django with Postgres, Nginx, and Gunicorn on Ubuntu
 https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu
+
+Django Admin ManyToManyField
+https://stackoverflow.com/questions/8043881/django-admin-manytomanyfield
 -----------------------------------------------------------------------------------------------
 Way1:
 $(document).ready(function(event) {
