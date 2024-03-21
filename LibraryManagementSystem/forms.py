@@ -1,8 +1,25 @@
+from dataclasses import fields
 from django.forms import ModelForm
 from django import forms
 from .models import *
 
+class AddBorrowerForm(forms.ModelForm):
+    """
+    Currently This Form Is Not being Used
+    """
+    class Meta:
+        model = Borrower
+        fields = ['books','book_borrower_student','borrow_date','due_date','return_date']
+        
+        widgets = {
+            'return_date': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'Select Return Date', 'type': 'date'}),
+        }
+        
+
 class return_date(forms.ModelForm):
+      """
+    Currently This Form Is Not being Used
+    """
     class Meta:
         model = Borrower
         fields = ['return_date']
@@ -10,3 +27,4 @@ class return_date(forms.ModelForm):
         widgets = {
             'return_date': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'Select Return Date', 'type': 'date'}),
         }
+        

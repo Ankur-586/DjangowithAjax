@@ -17,8 +17,11 @@ def home(request):
     return render(request,'home.html',context)
 
 def borrow_book(request, student_pk, book_pk):
-    borrower = save_borrowed_book(request, student_pk, book_pk)
-    return borrower
+    try:
+        borrower = save_borrowed_book(request, student_pk, [book_pk])
+        return JsonResponse({'message': 'Borrower created successfully', 'borrower': borrower}, status=201)
+    except Exception as e:
+        return JsonResponse({'message': f'Failed to borrow book: {str(e)}'}, status=400)
 
 def book_return(request, student_pk, borrow_id):
     if request.method == 'GET':

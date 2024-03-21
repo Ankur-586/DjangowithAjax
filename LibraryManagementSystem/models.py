@@ -103,23 +103,15 @@ class Borrower(models.Model):
 
     def overdue_fine(self,student_pk,borrow_id):
         current_datetime = timezone.localtime(timezone.now())
-    
-    # Get the borrowing by ID
         borrowing = get_object_or_404(Borrower, id=borrow_id)
-        
-        # Ensure the borrowing is associated with the specified student
         if borrowing.book_borrower_student != student_pk:
-            # The borrowing does not belong to the specified student
             return "This borrowing does not belong to the specified student."
-        
-        # Calculate overdue fine if the borrowing is overdue
         if borrowing.return_date is None and borrowing.due_date < current_datetime:
             due_date_local = timezone.localtime(borrowing.due_date)
             no_of_days = (current_datetime - due_date_local).days
             fine = max(0, no_of_days * 10)  # Add fine for overdue days (minimum 0)
             return fine
         else:
-            # The borrowing is not overdue
             return 0
     
 def late_fine(student_pk,borrow_id):
@@ -140,35 +132,39 @@ def late_fine(student_pk,borrow_id):
     else:
         return 'No Fine Amount !!'
 
-def save_borrowed_book(request,student_pk, book_pk):
-  """
-  Saves a new borrower for the given student and book.
-  Args:
-      request_data: The dictionary containing form data (if applicable).
-      student_pk: The primary key of the student.
-      book_pk: The primary key of the book.
-  Returns:
-    The created borrower object if successful, None otherwise.
-  """
-  try:
-    book = get_object_or_404(Book, pk=book_pk)
-    student = get_object_or_404(Student_Information, pk=student_pk)
-    borrower = Borrower(
-        book_borrower_student=student,  # Use the actual field name
-        book=book,
-        borrow_date=timezone.now(),
-    )
-    borrower.set_due_date()
-    borrower.save()
-    borrower_data = model_to_dict(borrower)
-    borrower_data['user_email'] = borrower.book_borrower_student.user.email
-    print('borrower_data',borrower_data)
-    return JsonResponse({'message':'Borrower created Successfully!!', 'data': borrower_data})
-  except (Book.DoesNotExist, Student_Information.DoesNotExist) as e:
-        return JsonResponse({'message': f"Book or Student not found"})
-  except Exception as e:
-    print(f"Unexpected error saving borrower: {e}")
-    return JsonResponse({'message': f"{e}"})
+def save_borrowed_book(request,student_pk, book_pks):
+    """
+    Saves a new borrower for the given student and book.
+    Args:
+        request_data: The dictionary containing form data (if applicable).
+        student_pk: The primary key of the student.
+        book_pk: The primary key of the book.
+    Returns:
+        The created borrower object if successful, None otherwise.
+    """
+    try:
+        # Get the student object
+        student = get_object_or_404(Student_Information, pk=book_pks)
+
+        # Iterate over each selected book primary key
+        for book_pk in book_pks:
+            # Get the book object
+            book = get_object_or_404(Book, pk=book_pk)
+
+            # Create a borrower object for the current book
+            borrower = Borrower(
+                book_borrower_student=student,
+                book=book,
+                borrow_date=timezone.now(),
+            )
+            borrower.set_due_date()
+            borrower.save()
+
+        return JsonResponse({'message': 'Borrowers created successfully!'})
+    except (Book.DoesNotExist, Student_Information.DoesNotExist) as e:
+        return JsonResponse({'message': 'Book or Student not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'message': f'Unexpected error saving borrower: {e}'}, status=500)
 
 
 

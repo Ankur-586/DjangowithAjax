@@ -12,13 +12,12 @@
                 <form method="post" action="" id='myForm'>
                     {% csrf_token %}
                     <div class="form-group">
-                        <label for="book">Select Book:</label>
-                        <select name="book" id="book" class="form-control">
-                            <option value="">Select Book</option>
-                            {% for book in books %}
-                                <option value="{{ book.pk }}">{{ book.title }}</option>
-                            {% endfor %}
-                        </select>
+                        <label for="student">Select Books:</label>
+                            <select class="form-select" multiple type="checkbox" size="3" aria-label="size 3">
+                                {% for book in books %}
+                                <option vlue="{{ book.title }}">{{ book.title }}</option>
+                                {% endfor %}
+                            </select>
                     </div>
                     <div class="form-group">
                         <label for="student">Select Student:</label>
