@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'bootstrap5',
     'LibraryManagementSystem',
     'Auth',
+    'django_select2',
 ]
 
 MIDDLEWARE = [

@@ -6,7 +6,7 @@ class LibraryCardAdmin(admin.ModelAdmin):
 admin.site.register(LibraryCard,LibraryCardAdmin)
 
 class AuthordAdmin(admin.ModelAdmin):
-    list_display = ['name','date_of_birth','nationality','created_at','updated_at']
+    list_display = ['id','name','date_of_birth','nationality','created_at','updated_at']
 admin.site.register(Author,AuthordAdmin)
 
 class BookdAdmin(admin.ModelAdmin):

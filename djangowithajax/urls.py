@@ -22,4 +22,5 @@ urlpatterns = [
     path('auth/',include('Auth.urls')),
     path('',include('LibraryManagementSystem.urls')),
     path('contact/',include('ajax_form.urls')),
+    path("select2/", include("django_select2.urls")),
 ]

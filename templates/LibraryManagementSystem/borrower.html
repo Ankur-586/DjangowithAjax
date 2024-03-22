@@ -1,4 +1,5 @@
 {% load static %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <!-- Modal Start -->
 <div class="modal" id="borrowModal" tabindex="-1" role="dialog" aria-labelledby="borrowModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -9,40 +10,59 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" action="" id='myForm'>
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="student">Select Books:</label>
-                            <select class="form-select" multiple type="checkbox" size="3" aria-label="size 3">
-                                {% for book in books %}
-                                <option vlue="{{ book.title }}">{{ book.title }}</option>
-                                {% endfor %}
-                            </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="student">Select Student:</label>
-                        <select name="student" id="student" class="form-control">
-                            <option value="">Select Student</option>
-                            {% for student in student_information %}
-                                <option value="{{ student.pk }}">{{ student.user }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" id="saveChangesBtn" class="btn btn-primary">Save changes</button>
+                <div class="container">
+                    <h2>Book Selection Form</h2>
+                    <form id="borrowBookForm">
+                      <div class="form-group">
+                        <label for="selectBooks">Select Books (Multi-Select):</label>
+                        <select id="selectBooks" class="form-control" multiple></select>
                       </div>
-                </form>
+                      <div class="form-group">
+                        <label for="selectUser">Select User:</label>
+                        <select id="selectUser" class="form-control"></select>
+                      </div>
+                    </form>
+                </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="saveChangesBtn" class="btn btn-primary">Save changes</button>
+              </div>
         </div>
     </div>
 </div>
-<div id="successMessage" class="alert alert-success" role="alert" style="display: none;"></div> </div>
+<div id="successMessage" class="alert alert-success" role="alert" style="display: none;"></div>
 <!-- Modal End -->
 {% block script %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" defer></script>
 <script>
-    var borrowBookUrl = "{% url 'borrow_book' 0 0 %}";
+    $(document).ready(function() {
+        $('#selectBooks').select2({
+            placeholder: 'Select books',
+            ajax: {
+                url: '{% url 'get_books' %}',
+                dataType: 'json',
+                processResults: function(data) {
+                    return {
+                        results: data.results
+                    };
+                }
+            }
+        });
+    
+        $('#selectUser').select2({
+            placeholder: 'Select user',
+            ajax: {
+                url: '{% url 'get_users' %}',
+                dataType: 'json',
+                processResults: function(data) {
+                    return {
+                        results: data.results
+                    };
+                }
+            }
+        });
+    });
 </script>
-<script src="{% static 'js/Modal-Forms/borrow_modal.js' %}"></script>
 {% endblock %}

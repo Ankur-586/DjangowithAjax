@@ -1,35 +1,91 @@
-$(document).ready(function() {
-    $('#saveChangesBtn').click(function() {
-        var selectedBookIds = $('select[name="books"]').val();
-        var selectedStudentId = $('#student').val();
+
+    // Sample data for books and authors
+    // const booksData = [
+    //   { id: 1, title: "Book 1", authors: ["Author 1", "Author 2"] },
+    //   { id: 2, title: "Book 2", authors: ["Author 2", "Author 3"] },
+    //   { id: 3, title: "Book 3", authors: ["Author 3", "Author 4"] }
+    // ];
+
+    // // Populate the select field with books
+    // function populateBooksSelect() {
+    //   const select = $("#bookSearch");
+    //   select.empty();
+    //   booksData.forEach(book => {
+    //     select.append(`<option value="${book.id}">${book.title}</option>`);
+    //   });
+    // }
+
+    // // Display authors of selected books
+    // function displaySelectedAuthors(selectedBookIds) {
+    //   const authorsList = $("#selectedAuthors");
+    //   authorsList.empty();
+    //   booksData.forEach(book => {
+    //     if (selectedBookIds.includes(book.id)) {
+    //       book.authors.forEach(author => {
+    //         authorsList.append(`<li class="list-group-item">${author}</li>`);
+    //       });
+    //     }
+    //   });
+    // }
+
+    // // Initialize the form
+    // $(document).ready(function() {
+    //   populateBooksSelect();
+
+    //   $("#bookSearch").change(function() {
+    //     const selectedBookIds = $(this).val() || [];
+    //     displaySelectedAuthors(selectedBookIds);
+    //   });
+
+    //   // Optional: Implement form submission logic
+    //   $("#bookSelectionForm").submit(function(event) {
+    //     event.preventDefault();
+    //     // Your form submission logic here
+    //   });
+    // });
+
+<form id="borrowBookForm">
+                        <div class="form-group">
+                            <label for="selectBooks">Select Books (Multi-Select):</label>
+                            <select id="selectBooks" class="form-control" multiple></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="selectUser">Select User:</label>
+                            <select id="selectUser" class="form-control"></select>
+                        </div>
+                    </form>
+// $(document).ready(function() {
+//     $('#saveChangesBtn').click(function() {
+//         var selectedBookIds = $('select[name="books"]').val();
+//         var selectedStudentId = $('#student').val();
         
-        if (!selectedBookIds || selectedBookIds.length === 0) {
-            alert('Please select at least one book.');
-            return;
-        }
+//         if (!selectedBookIds || selectedBookIds.length === 0) {
+//             alert('Please select at least one book.');
+//             return;
+//         }
 
-        var formData = {
-            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
-            'student_pk': selectedStudentId,
-            'book_pks': selectedBookIds, // Assuming 'book_pks' is a list of book primary keys
-        };
+//         var formData = {
+//             'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+//             'student_pk': selectedStudentId,
+//             'book_pks': selectedBookIds, // Assuming 'book_pks' is a list of book primary keys
+//         };
 
-        $.ajax({
-            url: borrowBookUrl.replace('0', selectedStudentId),
-            type: 'POST',
-            data: formData,
-            dataType: 'json',
-            success: function(response) {
-                $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
-                $('#borrowModal').modal('hide');
-            },
-            error: function(xhr, status, error) {
-                console.error('Error saving data:', status, error);
-                $('#errorMessage').delay(2000).text(status, error).show().fadeOut('slow');
-            }
-        });
-    });
-});
+//         $.ajax({
+//             url: borrowBookUrl.replace('0', selectedStudentId),
+//             type: 'POST',
+//             data: formData,
+//             dataType: 'json',
+//             success: function(response) {
+//                 $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
+//                 $('#borrowModal').modal('hide');
+//             },
+//             error: function(xhr, status, error) {
+//                 console.error('Error saving data:', status, error);
+//                 $('#errorMessage').delay(2000).text(status, error).show().fadeOut('slow');
+//             }
+//         });
+//     });
+// });
 
 // $(document).ready(function() {
 //     $('#saveChangesBtn').click(function() {

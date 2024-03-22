@@ -40,3 +40,28 @@ admin.site.register(BorrowedBook, BorrowedBookAdmin)
         {% if not forloop.last %}, {% endif %}
     {% endfor %}
 </td>
+
+<form method="post" action="" id='myForm'>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="student">Select Books:</label>
+                            <select class="form-select" multiple type="checkbox" size="3" aria-label="size 3">
+                                {% for book in books %}
+                                <option vlue="{{ book.title }}">{{ book.title }}</option>
+                                {% endfor %}
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="student">Select Student:</label>
+                        <select name="student" id="student" class="form-control">
+                            <option value="">Select Student</option>
+                            {% for student in student_information %}
+                                <option value="{{ student.pk }}">{{ student.user }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" id="saveChangesBtn" class="btn btn-primary">Save changes</button>
+                      </div>
+                </form>

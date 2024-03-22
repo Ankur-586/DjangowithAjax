@@ -48,6 +48,41 @@ def delete(request, id):
   member = Borrower.objects.get(id=id)
   member.delete()
   return JsonResponse({'message':'Record Deleted!!'})
+
+def test(request):
+    return render(request,'LibraryManagementSystem/test-form.html')
+
+def get_books(request):
+    books = Book.objects.all()
+    data = [{'id': book.pk, 'text': book.title, 'author_id': book.author.pk} for book in books]
+    return JsonResponse({'results': data})
+
+def get_authors(request):
+    authors = Author.objects.all()
+    data = [{'id': author.pk, 'text': author.name} for author in authors]
+    return JsonResponse({'results': data})
+
+def get_authors_for_books(request):
+    book_ids = request.GET.getlist('book_ids[]')
+    authors = set()
+    for book_id in book_ids:
+        book = Book.objects.filter(pk=book_id).first()
+        if book:
+            authors.add(book.author.pk)
+    data = [{'id': author_id, 'text': Author.objects.get(pk=author_id).name} for author_id in authors]
+    return JsonResponse({'results': data})
+
+def get_users(request):
+    users = MyUser.objects.all()
+    data = [{'id': user.pk, 'text': user.email} for user in users]
+    return JsonResponse({'results': data})
+
+# def borrow_book(request):
+#     if request.method == 'POST':
+#         # Handle saving of borrowed book here
+#         # Example: book_ids = request.POST.getlist('books')
+#         return JsonResponse({'message': 'Borrowing successful'}, status=200)
+#     return JsonResponse({'error': 'Method not allowed'}, status=405)
         
 # https://www.creative-tim.com/product/soft-ui-dashboard-django
 

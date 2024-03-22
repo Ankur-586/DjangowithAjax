@@ -104,14 +104,12 @@
                         <tr>
                             <th scope="col">Id</th>
                             <th scope="col">Book Name</th>
-                            <th scope="col">Book Id</th>
+                            <th scope="col">Author Name</th>
                             <th scope="col">Book Borrower Student</th>
-                            <th scope="col">Student Id</th>
+                            <th scope="col">Student Name</th>
                             <th scope="col">Borrow Date</th>
                             <th scope="col">Due Date</th>
                             <th scope="col">Return Date</th>
-                            <th scope="col">Created At</th>
-                            <th scope="col">Updated At</th>
                             <th scope="col">Return Book</th>
                             <th scope="col">Delete</th>
                         </tr>
@@ -126,17 +124,15 @@
                             </td>
                             <td>
                                 {% for book in borrow.books.all %}
-                                    {{ book.id }}
+                                    {{ book.author.name }}
                                     {% if not forloop.last %}, {% endif %}
                                 {% endfor %}
                             </td>
                             <td>{{ borrow.book_borrower_student }}</td>
-                            <th scope="row">{{ borrow.book_borrower_student.user.id }}</th>
+                            <th scope="row">{{ borrow.book_borrower_student.user.full_name }}</th>
                             <td>{{  borrow.borrow_date }}</td>
                             <td>{{ borrow.due_date }}</td>
                             <td>{{ borrow.return_date }}</td>
-                            <td>{{ borrow.created_at }}</td>
-                            <td>{{ borrow.updated_at }}</td>
                             <td>
                                 <button type='button' class='btn btn-secondary' data-bs-toggle="modal" data-bs-target="#returnModal" 
                                 data-student-id="{{ borrow.book_borrower_student.user.id }}" data-return-date="{{ borrow.return_date }}" 
@@ -153,7 +149,10 @@
                             Create Borrower 
                         </button>
                     </div>
-                    <div class="col-sm-10"><div id="successMessage" class="alert alert-success" role="alert" style="display:none;height:70%;"></div>
+                    <div class="col-sm-2">
+                        <a type="button" class="btn btn-secondary" href="{% url 'test' %}" target="_blank">Issue Book</a>
+                    </div>
+                    <div class="col-sm-8"><div id="successMessage" class="alert alert-success" role="alert" style="display:none;height:70%;"></div>
                     <div class="col-sm-10"><div id="errorMessage" class="alert alert-danger" role="alert" style="display:none;height:70%;"></div>
                 </div>
             </div>

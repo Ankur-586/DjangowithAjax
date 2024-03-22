@@ -17,7 +17,7 @@ class AddBorrowerForm(forms.ModelForm):
         
 
 class return_date(forms.ModelForm):
-      """
+    """
     Currently This Form Is Not being Used
     """
     class Meta:
@@ -28,3 +28,9 @@ class return_date(forms.ModelForm):
             'return_date': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'Select Return Date', 'type': 'date'}),
         }
         
+# from django_select2.forms import ModelSelect2MultipleWidget
+# from .models import Book, MyUser
+
+# class BorrowForm(forms.Form):
+#     books = forms.ModelMultipleChoiceField(queryset=Book.objects.all(), widget=ModelSelect2MultipleWidget(model=Book, search_fields=['title__icontains']))
+#     user = forms.ModelChoiceField(queryset=MyUser.objects.all(), widget=ModelSelect2Widget(model=MyUser, search_fields=['username__icontains']))
