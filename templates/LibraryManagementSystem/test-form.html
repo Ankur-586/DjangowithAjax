@@ -9,7 +9,8 @@
             <div class="card">
                 <div class="card-body">
                     <h2 class="card-title">Book Selection Form</h2>
-                    <form id="borrowBookForm">
+                    <form id="borrowBookForm" method="POST">
+                        {% csrf_token %}
                         <div class="form-group">
                             <label for="selectBooks">Select Books (Multi-Select):</label>
                             <select id="selectBooks" class="form-control form-control-lg" multiple></select>
@@ -27,7 +28,7 @@
                             <select id="selectUser" class="form-control"></select>
                         </div>
                         <div class="text-center mt-2">
-                            <button type="button" class="btn btn-secondary">Submit</button>
+                            <button type="submit" class="btn btn-secondary">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -95,17 +96,21 @@
             }
         });
     
+        $('#selectUser').prop('disabled', true);
         $('#selectBranch').on('change', function() {
             var selectedBranch = $(this).val();
             if (selectedBranch) {
+                // Enable user field when branch is selected
+                $('#selectUser').prop('disabled', false);
                 $.ajax({
                     url: "{% url 'get_users_by_branch' %}",
                     method: 'GET',
                     data: { branch: selectedBranch },
-                    dataType: 'json',
+                    dataType: 'json', // Ensure that the response is parsed as JSON
                     success: function(response) {
                         $('#selectUser').empty();
                         if (response.results.length > 0) {
+                            // Iterate over each user and add them to the select element
                             response.results.forEach(function(user) {
                                 $('#selectUser').append($('<option>', {
                                     value: user.id,
@@ -113,6 +118,7 @@
                                 }));
                             });
                         } else {
+                            // Handle case when no users are returned
                             $('#selectUser').append($('<option>', {
                                 value: '',
                                 text: 'No users found'
@@ -123,7 +129,39 @@
                         console.error('Error fetching users for branch:', error);
                     }
                 });
+            } else {
+                // Disable user field if no branch is selected
+                $('#selectUser').prop('disabled', true);
+                // Clear user options when branch is cleared
+                $('#selectUser').empty();
             }
+        });
+        // ############################################################
+        $('#borrowBookForm').on('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
+            var formData = {
+                books: $('#selectBooks').val(),
+                book_borrower_student: $('#selectUser').val(),
+                branch: $('#selectBranch').val(),
+            };
+
+            // Send form data to backend
+            $.ajax({
+                url: "{% url 'save_borrower' %}", // Replace 'your_backend_url' with your actual backend endpoint
+                method: 'POST',
+                headers: { "X-CSRFToken": csrftoken },
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    // Handle success response
+                    console.log('Form submitted successfully:', response);
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error('Error submitting form:', error);
+                }
+            });
         });
     });
 </script>

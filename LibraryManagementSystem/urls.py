@@ -19,7 +19,8 @@ urlpatterns = [
     path('delete/<int:id>', views.delete, name='delete'),
 
     # test
-    path('test',views.test,name='test'),
+    # path('test',views.test,name='test'),
     path('branch/',views.get_branch,name='get_branch'),
     path('get_users_by_branch/', views.get_users_by_branch, name='get_users_by_branch'),
+    path('save/',views.save_borrowed_books,name='save_borrower'),
 ]

@@ -49,8 +49,19 @@ def delete(request, id):
   member.delete()
   return JsonResponse({'message':'Record Deleted!!'})
 
-def test(request):
-    return render(request,'LibraryManagementSystem/test-form.html')
+# def test(request):
+#     return render(request,'LibraryManagementSystem/test-form.html')
+
+from django.views.decorators.http import require_POST
+@require_POST
+def save_borrowed_books(request):
+    # Assuming the form data is sent via POST request
+
+    # Retrieve form data from the request
+    books = request.POST.getlist('books[]')  # Assuming 'books' is a multi-select field
+    book_borrower_student = request.POST.get('book_borrower_student')  # Assuming 'book_borrower_student' is the selected user
+    branch = request.POST.get('branch')  # Assuming 'branch' is the selected branch
+    print('qwerty',books,book_borrower_student,branch)
 
 def get_books(request):
     books = Book.objects.all()
@@ -74,10 +85,8 @@ def get_branch(request):
 
 def get_users_by_branch(request):
     branch_id = request.GET.get('branch')
-    print('branch_id', branch_id)
     if branch_id:
         users = MyUser.objects.filter(branch__id=branch_id)
-        print('users', users)
         data = [{'id': user.pk, 'email': user.email} for user in users]
         return JsonResponse({'results': data})
     else:
