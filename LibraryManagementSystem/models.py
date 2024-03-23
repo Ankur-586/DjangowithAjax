@@ -65,7 +65,8 @@ class Branch(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 
     def __str__(self):
-        return dict(self.ROLE_CHOICES)[self.branch] 
+        role_dict = dict(self.ROLE_CHOICES)
+        return role_dict.get(self.branch, 'Unknown')
 
     class Meta:
         verbose_name = 'Branch'

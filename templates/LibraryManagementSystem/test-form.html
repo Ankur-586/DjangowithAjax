@@ -60,6 +60,7 @@
                 }
             }
         });
+    
         $('#selectBooks').on('change', function() {
             var selectedBookIds = $(this).val();
             if (selectedBookIds) {
@@ -68,11 +69,13 @@
                     method: 'GET',
                     data: { book_ids: selectedBookIds },
                     success: function(response) {
-                        $('#selectAuthor').empty();
-                        $('#selectAuthor').select2({
+                        // Preserve selected authors
+                        var selectedAuthors = $('#selectAuthor').val();
+                        // Clear and re-populate selectAuthor dropdown
+                        $('#selectAuthor').empty().select2({
                             placeholder: 'Select author',
                             data: response.results
-                        });
+                        }).val(selectedAuthors).trigger('change'); // Preserve selected authors
                     },
                     error: function(xhr, status, error) {
                         console.error('Error fetching authors for books:', error);
@@ -80,6 +83,7 @@
                 });
             }
         });
+    
         $('#selectBranch').select2({
             placeholder: 'Select Branch',
             ajax: {
@@ -90,7 +94,7 @@
                 }
             }
         });
-
+    
         $('#selectBranch').on('change', function() {
             var selectedBranch = $(this).val();
             if (selectedBranch) {
@@ -98,11 +102,10 @@
                     url: "{% url 'get_users_by_branch' %}",
                     method: 'GET',
                     data: { branch: selectedBranch },
-                    dataType: 'json', // Ensure that the response is parsed as JSON
+                    dataType: 'json',
                     success: function(response) {
                         $('#selectUser').empty();
                         if (response.results.length > 0) {
-                            // Iterate over each user and add them to the select element
                             response.results.forEach(function(user) {
                                 $('#selectUser').append($('<option>', {
                                     value: user.id,
@@ -110,7 +113,6 @@
                                 }));
                             });
                         } else {
-                            // Handle case when no users are returned
                             $('#selectUser').append($('<option>', {
                                 value: '',
                                 text: 'No users found'
