@@ -107,6 +107,7 @@
                             <th scope="col">Author Name</th>
                             <th scope="col">Book Borrower Student</th>
                             <th scope="col">Student Name</th>
+                            <th scope="col">Branch</th>
                             <th scope="col">Borrow Date</th>
                             <th scope="col">Due Date</th>
                             <th scope="col">Return Date</th>
@@ -130,6 +131,7 @@
                             </td>
                             <td>{{ borrow.book_borrower_student }}</td>
                             <th scope="row">{{ borrow.book_borrower_student.user.full_name }}</th>
+                            <td>{{  borrow.branch }}</td>
                             <td>{{  borrow.borrow_date }}</td>
                             <td>{{ borrow.due_date }}</td>
                             <td>{{ borrow.return_date }}</td>

@@ -57,11 +57,6 @@ def get_books(request):
     data = [{'id': book.pk, 'text': book.title, 'author_id': book.author.pk} for book in books]
     return JsonResponse({'results': data})
 
-def get_authors(request):
-    authors = Author.objects.all()
-    data = [{'id': author.pk, 'text': author.name} for author in authors]
-    return JsonResponse({'results': data})
-
 def get_authors_for_books(request):
     book_ids = request.GET.getlist('book_ids[]')
     authors = set()
@@ -71,6 +66,22 @@ def get_authors_for_books(request):
             authors.add(book.author.pk)
     data = [{'id': author_id, 'text': Author.objects.get(pk=author_id).name} for author_id in authors]
     return JsonResponse({'results': data})
+
+def get_branch(request):
+    branches = Branch.objects.all()
+    data = [{'id': branch.pk, 'text': str(branch), 'user_id': branch.user.pk} for branch in branches]
+    return JsonResponse({'results': data})
+
+def get_users_by_branch(request):
+    branch_id = request.GET.get('branch')
+    print('branch_id', branch_id)
+    if branch_id:
+        users = MyUser.objects.filter(branch__id=branch_id)
+        print('users', users)
+        data = [{'id': user.pk, 'email': user.email} for user in users]
+        return JsonResponse({'results': data})
+    else:
+        return JsonResponse({'results': []})
 
 def get_users(request):
     users = MyUser.objects.all()

@@ -46,7 +46,7 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
-class Student_Information(models.Model):
+class Branch(models.Model):
     NO_DEFAULT = 1
     IT = 2
     CS = 3
@@ -61,9 +61,21 @@ class Student_Information(models.Model):
       (EE,'Electrical Engineering'),
     )
 
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    library_card = models.OneToOneField(LibraryCard, on_delete=models.CASCADE)
     branch = models.PositiveSmallIntegerField(choices=ROLE_CHOICES,default=NO_DEFAULT)
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return dict(self.ROLE_CHOICES)[self.branch] 
+
+    class Meta:
+        verbose_name = 'Branch'
+        verbose_name_plural = 'Branch'
+
+class Student_Information(models.Model):
+
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+    library_card = models.OneToOneField(LibraryCard, on_delete=models.CASCADE)
     Penalty = models.CharField(max_length=15,default="No Penalty")
     address = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -79,6 +91,7 @@ class Student_Information(models.Model):
 class Borrower(models.Model):
     books = models.ManyToManyField(Book)
     book_borrower_student = models.ForeignKey(Student_Information, on_delete=models.CASCADE)
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     borrow_date = models.DateTimeField(default=timezone.now)
     due_date = models.DateTimeField()
     return_date = models.DateTimeField(null=True, blank=True)

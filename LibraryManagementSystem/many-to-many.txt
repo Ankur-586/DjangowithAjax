@@ -28,28 +28,51 @@ class BorrowedBookAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at',)
 admin.site.register(BorrowedBook, BorrowedBookAdmin)
 
+---------------------------------------------------------------
+this html and js display the author fiedl only if book is selected
+------------------------------------------
+Do Not Delete. Can be used for future reference
 {% extends 'base.html' %}
 {% load static %}
 {% block title %} Test form Us {% endblock %}
 {% block content %}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<div class="container col-md-12" style="">
+<style>
+    .select2-container .select2-selection--single {
+        height: 38px; /* Adjust height to match form-control */
+        border: 1px solid #ccc; /* Add a thin border */
+        border-radius: 4px; /* Add rounded corners */
+      }
+      .select2-container .select2-selection--multiple .select2-selection__rendered {
+        padding-top: 4px; /* Adjust padding for better alignment */
+      }
+</style>
+<div class="container">
     <h2>Book Selection Form</h2>
     <form id="borrowBookForm">
-      <div class="form-group col-sm-4">
-        <label for="selectBooks">Select Books (Multi-Select):</label>
-        <select id="selectBooks" class="form-control" multiple></select>
-      </div>
-      <div class="form-group col-sm-4">
-        <label for="selectAuthor">Author:</label>
-        <select id="selectAuthor" class="form-control" multiple></select>
-      
-      <div class="form-group">
-        <label for="selectUser">Select User:</label>
-        <select id="selectUser" class="form-control"></select>
-      </div>
+        <div class="form-row">
+            <div class="col">
+                <div class="form-group">
+                <label for="selectBooks">Select Books (Multi-Select):</label>
+                <select id="selectBooks" class="form-control" multiple></select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group" id="authorContainer" style="display:none;">
+                <label for="selectAuthor">Author:</label>
+                <select id="selectAuthor" class="form-control" multiple></select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="selectUser">Select User:</label>
+            <select id="selectUser" class="form-control"></select>
+        </div>
     </form>
-    <div class="form-group"><button>Submit</button></div>
+    <div class="form-group">
+        <button type="button" class="btn btn-secondary">Submit</button>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -69,7 +92,7 @@ admin.site.register(BorrowedBook, BorrowedBookAdmin)
                 }
             }
         });
-    
+
         $('#selectBooks').on('change', function() {
             var selectedBookIds = $(this).val(); // Get the selected book IDs
             if (selectedBookIds) {
@@ -79,10 +102,15 @@ admin.site.register(BorrowedBook, BorrowedBookAdmin)
                     data: { book_ids: selectedBookIds },
                     success: function(response) {
                         $('#selectAuthor').empty(); // Clear the author dropdown
-                        $('#selectAuthor').select2({
-                            placeholder: 'Select author',
-                            data: response.results
-                        });
+                        if (response.results.length > 0) {
+                            $('#selectAuthor').closest('.form-group').show(); // Show the author field
+                            $('#selectAuthor').select2({
+                                placeholder: 'Select author',
+                                data: response.results
+                            });
+                        } else {
+                            $('#selectAuthor').closest('.form-group').hide(); // Hide the author field if no authors are found
+                        }
                     },
                     error: function(xhr, status, error) {
                         console.error('Error fetching authors for books:', error);
@@ -90,7 +118,7 @@ admin.site.register(BorrowedBook, BorrowedBookAdmin)
                 });
             }
         });
-    
+
         $('#selectUser').select2({
             placeholder: 'Select user',
             ajax: {
@@ -104,34 +132,7 @@ admin.site.register(BorrowedBook, BorrowedBookAdmin)
             }
         });
     });
-    
 </script>
 {% endblock %}
-
-def test(request):
-    return render(request,'LibraryManagementSystem/test-form.html')
-
-def get_books(request):
-    books = Book.objects.all()
-    data = [{'id': book.pk, 'text': book.title, 'author_id': book.author.pk} for book in books]
-    return JsonResponse({'results': data})
-
-def get_authors(request):
-    authors = Author.objects.all()
-    data = [{'id': author.pk, 'text': author.name} for author in authors]
-    return JsonResponse({'results': data})
-
-def get_authors_for_books(request):
-    book_ids = request.GET.getlist('book_ids[]')
-    authors = set()
-    for book_id in book_ids:
-        book = Book.objects.filter(pk=book_id).first()
-        if book:
-            authors.add(book.author.pk)
-    data = [{'id': author_id, 'text': Author.objects.get(pk=author_id).name} for author_id in authors]
-    return JsonResponse({'results': data})
-
-def get_users(request):
-    users = MyUser.objects.all()
-    data = [{'id': user.pk, 'text': user.email} for user in users]
-    return JsonResponse({'results': data})
+Do Not Delete
+--------------------------------------------------------------------------------------

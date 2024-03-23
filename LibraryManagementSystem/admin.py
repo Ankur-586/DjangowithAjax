@@ -13,11 +13,15 @@ class BookdAdmin(admin.ModelAdmin):
     list_display = ['title','author','publication_year','isbn','quantity','created_at','updated_at']
 admin.site.register(Book,BookdAdmin)
 
+class Student_BranchAdmin(admin.ModelAdmin):
+    list_display = ['id','branch','user'] 
+admin.site.register(Branch,Student_BranchAdmin)
+
 class Student_InformationAdmin(admin.ModelAdmin):
-    list_display = ['user','library_card','address','Penalty','branch','created_at','updated_at']
+    list_display = ['user','library_card','address','Penalty','created_at','updated_at']
 admin.site.register(Student_Information,Student_InformationAdmin)
 
 class BorrowerAdmin(admin.ModelAdmin):
     filter_horizontal = ('books',)
-    list_display = ['book_borrower_student','display_book','borrow_date','due_date','return_date','created_at','updated_at']
+    list_display = ['book_borrower_student','display_book','branch','borrow_date','due_date','return_date','created_at','updated_at']
 admin.site.register(Borrower,BorrowerAdmin)

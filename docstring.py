@@ -94,3 +94,98 @@ $(document).ready(function() {
   });
   });
   '''
+
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Test form Us {% endblock %}
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<div class="container">
+    <h2>Book Selection Form</h2>
+    <form id="borrowBookForm">
+        <div class="form-row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="selectBooks">Select Books (Multi-Select):</label>
+                    <select id="selectBooks" class="form-control" multiple></select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group" id="authorContainer">
+                    <label for="selectAuthor">Author:</label>
+                    <select id="selectAuthor" class="form-control" multiple></select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="selectUser">Select User:</label>
+            <select id="selectUser" class="form-control"></select>
+        </div>
+    </form>
+    <div class="form-group">
+        <button type="button" class="btn btn-secondary">Submit</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" defer></script>
+<script>
+    $(document).ready(function() {
+        // Initialize select2 for the author field
+        $('#selectAuthor').select2({
+            placeholder: 'Select author',
+            multiple: true, // Enable multi-select
+            tags: true // Allow custom tags
+        });
+
+        $('#selectBooks').select2({
+            placeholder: 'Select books',
+            ajax: {
+                url: "{% url 'get_books' %}",
+                dataType: 'json',
+                processResults: function(data) {
+                    return {
+                        results: data.results
+                    };
+                }
+            }
+        });
+
+        $('#selectBooks').on('change', function() {
+            var selectedBookIds = $(this).val(); // Get the selected book IDs
+            if (selectedBookIds) {
+                $.ajax({
+                    url: "{% url 'get_authors_for_books' %}",
+                    method: 'GET',
+                    data: { book_ids: selectedBookIds },
+                    success: function(response) {
+                        $('#selectAuthor').empty(); // Clear the author dropdown
+                        $('#selectAuthor').select2({
+                            placeholder: 'Select author',
+                            data: response.results
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching authors for books:', error);
+                    }
+                });
+            }
+        });
+
+        $('#selectUser').select2({
+            placeholder: 'Select user',
+            ajax: {
+                url: "{% url 'get_users' %}",
+                dataType: 'json',
+                processResults: function(data) {
+                    return {
+                        results: data.results
+                    };
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
