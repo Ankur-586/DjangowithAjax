@@ -10,3 +10,12 @@ body{
     background-size: cover; /* Adjust the background image size to cover the entire body */
   }
 /* ------------------------- header and footer --------------------------------------- */
+
+/* select2 fix start */
+.select2-close-mask{
+  z-index: 2099;
+}
+.select2-dropdown{
+  z-index: 3051;
+}
+/* select2 fix start */

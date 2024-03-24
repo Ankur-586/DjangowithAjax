@@ -4,7 +4,7 @@ from Auth.models import MyUser
 from datetime import date, timedelta, datetime as dt
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-import datetime, random
+import random
 from django.forms.models import model_to_dict
 
 class LibraryCard(models.Model):
@@ -67,14 +67,17 @@ class Branch(models.Model):
     def __str__(self):
         role_dict = dict(self.ROLE_CHOICES)
         return role_dict.get(self.branch, 'Unknown')
+    
+    @property 
+    def branch_name(self):
+        role_dict = dict(self.ROLE_CHOICES)
+        return role_dict.get(self.branch, 'Unknown')
 
     class Meta:
         verbose_name = 'Branch'
         verbose_name_plural = 'Branch'
 
 class Student_Information(models.Model):
-
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     library_card = models.OneToOneField(LibraryCard, on_delete=models.CASCADE)
     Penalty = models.CharField(max_length=15,default="No Penalty")
@@ -82,8 +85,9 @@ class Student_Information(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.user.email
+    @property
+    def return_user_email(self):
+        return self.branch.user.email
     
     class Meta:
         verbose_name = 'Student_Information'
@@ -91,7 +95,7 @@ class Student_Information(models.Model):
 
 class Borrower(models.Model):
     books = models.ManyToManyField(Book)
-    book_borrower_student = models.ForeignKey(Student_Information, on_delete=models.CASCADE)
+    book_borrower_student = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     borrow_date = models.DateTimeField(default=timezone.now)
     due_date = models.DateTimeField()
@@ -128,57 +132,51 @@ class Borrower(models.Model):
         else:
             return 0
     
-def late_fine(student_pk,borrow_id):
-    """
-    This View Is connected with daj
-    """
-    student = get_object_or_404(MyUser, pk=student_pk)
-    student_info = Student_Information.objects.get(user=student)  # Retrieve Student_Information instance
-    borrowings = Borrower.objects.filter(book_borrower_student=student_info) 
-    total_fine = 0
-    for borrowing in borrowings:
-        fine = borrowing.overdue_fine(student_pk,borrow_id)  # Calculate fine for each borrowing
-        total_fine += fine
-    if total_fine > 0:
-        student_info.Penalty = str(total_fine)
-        # student_info.save()  # Uncomment this line if you want to update the student's fine in the database
-        return total_fine
-    else:
-        return 'No Fine Amount !!'
+# def late_fine(student_pk,borrow_id):
+#     """
+#     This View Is connected with daj
+#     """
+#     student = get_object_or_404(MyUser, pk=student_pk)
+#     student_info = Student_Information.objects.get(user=student)  # Retrieve Student_Information instance
+#     borrowings = Borrower.objects.filter(book_borrower_student=student_info) 
+#     total_fine = 0
+#     for borrowing in borrowings:
+#         fine = borrowing.overdue_fine(student_pk,borrow_id)  # Calculate fine for each borrowing
+#         total_fine += fine
+#     if total_fine > 0:
+#         student_info.Penalty = str(total_fine)
+#         # student_info.save()  # Uncomment this line if you want to update the student's fine in the database
+#         return total_fine
+#     else:
+#         return 'No Fine Amount !!'
 
-def save_borrowed_book(request,student_pk, book_pks):
-    """
-    Saves a new borrower for the given student and book.
-    Args:
-        request_data: The dictionary containing form data (if applicable).
-        student_pk: The primary key of the student.
-        book_pk: The primary key of the book.
-    Returns:
-        The created borrower object if successful, None otherwise.
-    """
+def save_borrowed_book(request, books_borrowed, borrower_student, borrowers_branch):
+    borrow_date = timezone.now()
+    due_date = borrow_date + timezone.timedelta(days=10)
     try:
-        # Get the student object
-        student = get_object_or_404(Student_Information, pk=book_pks)
+        # Check if the student and branch exist
+        student = MyUser.objects.get(id=borrower_student)
+        branch = Branch.objects.get(id=borrowers_branch)
+        
+        # Create a Borrower instance
+        borrower = Borrower.objects.create(
+            book_borrower_student=student,
+            branch=branch,
+            borrow_date=borrow_date,
+            due_date=due_date
+        )
 
-        # Iterate over each selected book primary key
-        for book_pk in book_pks:
-            # Get the book object
-            book = get_object_or_404(Book, pk=book_pk)
-
-            # Create a borrower object for the current book
-            borrower = Borrower(
-                book_borrower_student=student,
-                book=book,
-                borrow_date=timezone.now(),
-            )
-            borrower.set_due_date()
-            borrower.save()
-
-        return JsonResponse({'message': 'Borrowers created successfully!'})
-    except (Book.DoesNotExist, Student_Information.DoesNotExist) as e:
-        return JsonResponse({'message': 'Book or Student not found'}, status=404)
+        # Add selected books to the borrower
+        borrower.books.add(*books_borrowed)
+        return JsonResponse({'success': True, 'message': 'Borrower created successfully'})
+    except Book.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'One or more books not found'}, status=404)
+    except Student_Information.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Student not found'}, status=404)
+    except Branch.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Branch not found'}, status=404)
     except Exception as e:
-        return JsonResponse({'message': f'Unexpected error saving borrower: {e}'}, status=500)
+        return JsonResponse({'success': False, 'message': f'Unexpected error saving borrower: {e}'}, status=500)
 
 
 

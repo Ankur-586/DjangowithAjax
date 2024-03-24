@@ -18,7 +18,7 @@ class Student_BranchAdmin(admin.ModelAdmin):
 admin.site.register(Branch,Student_BranchAdmin)
 
 class Student_InformationAdmin(admin.ModelAdmin):
-    list_display = ['user','library_card','address','Penalty','created_at','updated_at']
+    list_display = ['branch','library_card','address','Penalty','created_at','updated_at']
 admin.site.register(Student_Information,Student_InformationAdmin)
 
 class BorrowerAdmin(admin.ModelAdmin):

@@ -75,6 +75,7 @@
                             <th scope="col">Id</th>
                             <th scope="col">User</th>
                             <th scope="col">Student Id</th>
+                            <th scope="col">Branch</th>
                             <th scope="col">Library Card</th>
                             <th scope="col">Penalty (in Rupees) </th>
                             <th scope="col">Address</th>
@@ -84,8 +85,9 @@
                         {% for bws in student_information %}
                         <tr>
                             <th scope="row">{{ bws.id }}</th>
-                            <th scope="row">{{ bws.user }}</th>
-                            <th scope="row">{{ bws.user.id }}</th>
+                            <td>{{ bws.branch.user }}</td>
+                            <td>{{ bws.branch.user.id }}</td>
+                            <td>{{ bws.branch }}</td>
                             <td>{{ bws.library_card }}</td>
                             {% if bws.Penalty == 'No Penalty' %}
                             <td>{{ bws.Penalty }}</td>
@@ -130,7 +132,7 @@
                                 {% endfor %}
                             </td>
                             <td>{{ borrow.book_borrower_student }}</td>
-                            <th scope="row">{{ borrow.book_borrower_student.user.full_name }}</th>
+                            <th scope="row">{{ borrow.book_borrower_student.full_name }}</th>
                             <td>{{  borrow.branch }}</td>
                             <td>{{  borrow.borrow_date }}</td>
                             <td>{{ borrow.due_date }}</td>

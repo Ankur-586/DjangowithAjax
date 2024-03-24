@@ -1,6 +1,6 @@
 {% load static %}
 <!-- Modal Start -->
-<div class="modal" id="borrowModal" tabindex="-1" role="dialog" aria-labelledby="borrowModalLabel" aria-hidden="true">
+<div class="modal" id="borrowModal" role="dialog" aria-labelledby="borrowModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body">
                 <!-- Move your HTML content here -->
-                <div class="container justify-content-center">
+                <div class="container justify-content-center"> 
                     <div class="row">
                         <form id="borrowBookForm" method="POST">
                             {% csrf_token %}
@@ -35,7 +35,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" id="saveChangesBtn" class="btn btn-primary">Save changes</button>
+                <button type="submit" id="saveChangesBtn" class="btn btn-primary submit">Save changes</button>
             </div>
         </div>
     </div>
@@ -46,119 +46,12 @@
 
 {% block scripts %}
 <script>
-    $(document).ready(function() {
-        // Initialize select2 after the modal is shown
-        $('#borrowModal').on('shown.bs.modal', function () {
-            // Initialize select2 for the author field
-            $('#selectAuthor').select2({
-                placeholder: 'Select author',
-                multiple: true,
-                tags: true
-            });
-
-            $('#selectBooks').select2({
-                placeholder: 'Select books',
-                ajax: {
-                    url: "{% url 'get_books' %}",
-                    dataType: 'json',
-                    processResults: function(data) {
-                        return { results: data.results };
-                    }
-                }
-            });
-
-            $('#selectBooks').on('change', function() {
-                var selectedBookIds = $(this).val();
-                if (selectedBookIds) {
-                    $.ajax({
-                        url: "{% url 'get_authors_for_books' %}",
-                        method: 'GET',
-                        data: { book_ids: selectedBookIds },
-                        success: function(response) {
-                            var selectedAuthors = $('#selectAuthor').val();
-                            $('#selectAuthor').empty().select2({
-                                placeholder: 'Select author',
-                                data: response.results
-                            }).val(selectedAuthors).trigger('change');
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error fetching authors for books:', error);
-                        }
-                    });
-                }
-            });
-
-            $('#selectBranch').select2({
-                placeholder: 'Select Branch',
-                ajax: {
-                    url: "{% url 'get_branch' %}",
-                    dataType: 'json',
-                    processResults: function(data) {
-                        return { results: data.results };
-                    }
-                }
-            });
-
-            $('#selectUser').prop('disabled', true);
-            $('#selectBranch').on('change', function() {
-                var selectedBranch = $(this).val();
-                if (selectedBranch) {
-                    $('#selectUser').prop('disabled', false);
-                    $.ajax({
-                        url: "{% url 'get_users_by_branch' %}",
-                        method: 'GET',
-                        data: { branch: selectedBranch },
-                        dataType: 'json',
-                        success: function(response) {
-                            $('#selectUser').empty();
-                            if (response.results.length > 0) {
-                                response.results.forEach(function(user) {
-                                    $('#selectUser').append($('<option>', {
-                                        value: user.id,
-                                        text: user.email
-                                    }));
-                                });
-                            } else {
-                                $('#selectUser').append($('<option>', {
-                                    value: '',
-                                    text: 'No users found'
-                                }));
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error fetching users for branch:', error);
-                        }
-                    });
-                } else {
-                    $('#selectUser').prop('disabled', true);
-                    $('#selectUser').empty();
-                }
-            });
-        });
-
-        $('#borrowBookForm').on('submit', function(event) {
-            event.preventDefault();
-            var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
-            var formData = {
-                books: $('#selectBooks').val(),
-                book_borrower_student: $('#selectUser').val(),
-                branch: $('#selectBranch').val(),
-            };
-
-            $.ajax({
-                url: "{% url 'save_borrower' %}",
-                method: 'POST',
-                headers: { "X-CSRFToken": csrftoken },
-                data: formData,
-                dataType: 'json',
-                success: function(response) {
-                    console.log('Form submitted successfully:', response);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error submitting form:', error);
-                }
-            });
-        });
-    });
+    const get_books = "{% url 'get_books' %}"
+    const get_authors_for_books = "{% url 'get_authors_for_books' %}"
+    const get_branch = "{% url 'get_branch' %}"
+    const get_users_by_branch = "{% url 'get_users_by_branch' %}"
+    const save_borrower = "{% url 'save_borrower' %}"
+    const get_updated_data_for_table = "{% url 'get_updated_data_for_table' %}"
 </script>
+<script src="{% static 'js/Modal-Forms/borrow_modal.js' %}"></script>
 {% endblock %}

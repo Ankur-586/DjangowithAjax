@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from .models import *
 from django.db.models import Q
@@ -16,12 +16,16 @@ def home(request):
     }
     return render(request,'home.html',context)
 
-def borrow_book(request, student_pk, book_pk):
-    try:
-        borrower = save_borrowed_book(request, student_pk, [book_pk])
-        return JsonResponse({'message': 'Borrower created successfully', 'borrower': borrower}, status=201)
-    except Exception as e:
-        return JsonResponse({'message': f'Failed to borrow book: {str(e)}'}, status=400)
+def delete_table(request):
+    Student_Information.objects.all().delete()
+    return HttpResponse('Deleted')
+
+# def borrow_book(request, student_pk, book_pk):
+#     try:
+#         borrower = save_borrowed_book(request, student_pk, [book_pk])
+#         return JsonResponse({'message': 'Borrower created successfully', 'borrower': borrower}, status=201)
+#     except Exception as e:
+#         return JsonResponse({'message': f'Failed to borrow book: {str(e)}'}, status=400)
 
 def book_return(request, student_pk, borrow_id):
     if request.method == 'GET':
@@ -52,16 +56,37 @@ def delete(request, id):
 # def test(request):
 #     return render(request,'LibraryManagementSystem/test-form.html')
 
-from django.views.decorators.http import require_POST
-@require_POST
 def save_borrowed_books(request):
-    # Assuming the form data is sent via POST request
+    if request.method == 'POST':
+        books_borrowed = request.POST.getlist('books[]')
+        borrower_student = request.POST.get('book_borrower_student')
+        borrowers_branch = request.POST.get('branch')
+        print(books_borrowed, borrower_student, borrowers_branch)
+        try:
+            # Call the save_borrowed_book function from your models
+            save_borrowed_book(request, books_borrowed, borrower_student, borrowers_branch)
+            return JsonResponse({'message': 'Borrowed books saved successfully!'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
-    # Retrieve form data from the request
-    books = request.POST.getlist('books[]')  # Assuming 'books' is a multi-select field
-    book_borrower_student = request.POST.get('book_borrower_student')  # Assuming 'book_borrower_student' is the selected user
-    branch = request.POST.get('branch')  # Assuming 'branch' is the selected branch
-    print('qwerty',books,book_borrower_student,branch)
+def get_updated_data_for_table(request):
+    borrowed_books = Borrower.objects.all().order_by('-id')
+    data = []
+    for borrower in borrowed_books:
+        data.append({
+            'id': borrower.pk,
+            'book_name': ', '.join(book.title for book in borrower.books.all()),
+            'author_name': ', '.join(book.author.name for book in borrower.books.all()),
+            'book_borrower_student': borrower.book_borrower_student.email,  # Assuming MyUser has an 'email' field
+            'student_name': borrower.book_borrower_student.full_name,  # Assuming MyUser has a 'full_name' field
+            'branch': borrower.branch.branch_name,  # Assuming Branch has a 'name' field
+            'borrow_date': borrower.borrow_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'due_date': borrower.due_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'return_date': borrower.return_date.strftime('%Y-%m-%d %H:%M:%S') if borrower.return_date else None,
+        })
+    return JsonResponse(data, safe=False)   
 
 def get_books(request):
     books = Book.objects.all()
@@ -91,11 +116,6 @@ def get_users_by_branch(request):
         return JsonResponse({'results': data})
     else:
         return JsonResponse({'results': []})
-
-def get_users(request):
-    users = MyUser.objects.all()
-    data = [{'id': user.pk, 'text': user.email} for user in users]
-    return JsonResponse({'results': data})
 
 # def borrow_book(request):
 #     if request.method == 'POST':
