@@ -106,9 +106,11 @@
                         <tr>
                             <th scope="col">Id</th>
                             <th scope="col">Book Name</th>
+                            <th scope="col">Book ID</th>
                             <th scope="col">Author Name</th>
                             <th scope="col">Book Borrower Student</th>
                             <th scope="col">Student Name</th>
+                            <th scope="col">Student ID</th>
                             <th scope="col">Branch</th>
                             <th scope="col">Borrow Date</th>
                             <th scope="col">Due Date</th>
@@ -127,19 +129,26 @@
                             </td>
                             <td>
                                 {% for book in borrow.books.all %}
+                                    {{ book.id }}
+                                    {% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for book in borrow.books.all %}
                                     {{ book.author.name }}
                                     {% if not forloop.last %}, {% endif %}
                                 {% endfor %}
                             </td>
                             <td>{{ borrow.book_borrower_student }}</td>
                             <th scope="row">{{ borrow.book_borrower_student.full_name }}</th>
+                            <td>{{  borrow.book_borrower_student.id }}</td>
                             <td>{{  borrow.branch }}</td>
                             <td>{{  borrow.borrow_date }}</td>
                             <td>{{ borrow.due_date }}</td>
                             <td>{{ borrow.return_date }}</td>
                             <td>
                                 <button type='button' class='btn btn-secondary' data-bs-toggle="modal" data-bs-target="#returnModal" 
-                                data-student-id="{{ borrow.book_borrower_student.user.id }}" data-return-date="{{ borrow.return_date }}" 
+                                data-student-id="{{ borrow.book_borrower_student.id }}" data-return-date="{{ borrow.return_date }}" 
                                 data-borrow-id="{{ borrow.id }}">Return Book</button>
                             </td>
                             <td><button type='button' class="btn btn-secondary delete-btn" data-borrower-id="{{ borrow.id }}">Delete</button></td>

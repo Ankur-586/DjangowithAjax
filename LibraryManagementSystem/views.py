@@ -20,17 +20,17 @@ def delete_table(request):
     Student_Information.objects.all().delete()
     return HttpResponse('Deleted')
 
-# def borrow_book(request, student_pk, book_pk):
-#     try:
-#         borrower = save_borrowed_book(request, student_pk, [book_pk])
-#         return JsonResponse({'message': 'Borrower created successfully', 'borrower': borrower}, status=201)
-#     except Exception as e:
-#         return JsonResponse({'message': f'Failed to borrow book: {str(e)}'}, status=400)
-
-def book_return(request, student_pk, borrow_id):
+def book_return(request):
     if request.method == 'GET':
-        late_penalty = late_fine(student_pk,borrow_id)  # Replace with your late_fine function logic
-        return JsonResponse({'late_penalty': late_penalty})  # Example response
+        student_id = request.GET.get("student-id")
+        borrow_obj_id = request.GET.get("borrow-id")
+        print(student_id,borrow_obj_id)
+        student = get_object_or_404(MyUser, id=student_id)
+        borrowings = Borrower.objects.get(id=borrow_obj_id,book_borrower_student=student_id)  
+        #late_penalty = late_fine(borrow_obj_id,student_id)  # Replace with your late_fine function logic
+        obj_pk, Stu_pk = borrowings.get_pk_and_student()
+        print('table:',obj_pk,'student:',Stu_pk)
+        #return JsonResponse({'late_penalty': late_penalty})  # Example response
     # elif request.method == 'POST':
     #     return_date_str = request.POST.get('returnDate')
     #     if not return_date_str:
@@ -52,9 +52,6 @@ def delete(request, id):
   member = Borrower.objects.get(id=id)
   member.delete()
   return JsonResponse({'message':'Record Deleted!!'})
-
-# def test(request):
-#     return render(request,'LibraryManagementSystem/test-form.html')
 
 def save_borrowed_books(request):
     if request.method == 'POST':
@@ -116,13 +113,6 @@ def get_users_by_branch(request):
         return JsonResponse({'results': data})
     else:
         return JsonResponse({'results': []})
-
-# def borrow_book(request):
-#     if request.method == 'POST':
-#         # Handle saving of borrowed book here
-#         # Example: book_ids = request.POST.getlist('books')
-#         return JsonResponse({'message': 'Borrowing successful'}, status=200)
-#     return JsonResponse({'error': 'Method not allowed'}, status=405)
         
 # https://www.creative-tim.com/product/soft-ui-dashboard-django
 

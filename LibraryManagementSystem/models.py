@@ -108,8 +108,11 @@ class Borrower(models.Model):
         return ','.join([str(book) for book in self.books.all()])
     
     def __str__(self):
-        return self.display_book
+        return f"{self.pk} - {self.book_borrower_student}"
     
+    def get_pk_and_student(self):
+        return self.pk, str(self.book_borrower_student)
+
     @property
     def is_overdue(self):
         if self.return_date is None and self.due_date < date.today():
@@ -119,9 +122,9 @@ class Borrower(models.Model):
     def set_due_date(self):
         self.due_date = self.borrow_date + timedelta(days=10)
 
-    def overdue_fine(self,student_pk,borrow_id):
+    def overdue_fine(self,student_pk,borrow_obj_id):
         current_datetime = timezone.localtime(timezone.now())
-        borrowing = get_object_or_404(Borrower, id=borrow_id)
+        borrowing = get_object_or_404(Borrower, id=borrow_obj_id)
         if borrowing.book_borrower_student != student_pk:
             return "This borrowing does not belong to the specified student."
         if borrowing.return_date is None and borrowing.due_date < current_datetime:
@@ -132,46 +135,42 @@ class Borrower(models.Model):
         else:
             return 0
     
-# def late_fine(student_pk,borrow_id):
-#     """
-#     This View Is connected with daj
-#     """
-#     student = get_object_or_404(MyUser, pk=student_pk)
-#     student_info = Student_Information.objects.get(user=student)  # Retrieve Student_Information instance
-#     borrowings = Borrower.objects.filter(book_borrower_student=student_info) 
-#     total_fine = 0
-#     for borrowing in borrowings:
-#         fine = borrowing.overdue_fine(student_pk,borrow_id)  # Calculate fine for each borrowing
-#         total_fine += fine
-#     if total_fine > 0:
-#         student_info.Penalty = str(total_fine)
-#         # student_info.save()  # Uncomment this line if you want to update the student's fine in the database
-#         return total_fine
-#     else:
-#         return 'No Fine Amount !!'
+def late_fine(student_id,borrow_obj_id):
+    """
+    This View Is connected with daj
+    """
+    student = get_object_or_404(MyUser, id=student_id)
+    # student_info = Student_Information.objects.get(user=student)  # Retrieve Student_Information instance
+    borrowings = Borrower.objects.get(book_borrower_student=student)
+    print('student',borrowings,student) 
+    # total_fine = 0
+    # for borrowing in borrowings:
+    #     fine = borrowing.overdue_fine(student_pk)  # Calculate fine for each borrowing
+    #     total_fine += fine
+    # if total_fine > 0:
+    #     student.Penalty = str(total_fine)
+    #     # student_info.save()  # Uncomment this line if you want to update the student's fine in the database
+    #     return total_fine
+    # else:
+    #     return 'No Fine Amount !!'
 
 def save_borrowed_book(request, books_borrowed, borrower_student, borrowers_branch):
     borrow_date = timezone.now()
     due_date = borrow_date + timezone.timedelta(days=10)
     try:
-        # Check if the student and branch exist
         student = MyUser.objects.get(id=borrower_student)
         branch = Branch.objects.get(id=borrowers_branch)
-        
-        # Create a Borrower instance
         borrower = Borrower.objects.create(
             book_borrower_student=student,
             branch=branch,
             borrow_date=borrow_date,
             due_date=due_date
         )
-
-        # Add selected books to the borrower
         borrower.books.add(*books_borrowed)
         return JsonResponse({'success': True, 'message': 'Borrower created successfully'})
     except Book.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'One or more books not found'}, status=404)
-    except Student_Information.DoesNotExist:
+    except MyUser.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Student not found'}, status=404)
     except Branch.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Branch not found'}, status=404)

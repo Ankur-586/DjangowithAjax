@@ -19,3 +19,9 @@ body{
   z-index: 3051;
 }
 /* select2 fix start */
+
+/* css propery to remove background from a image AND don't delete this */
+img{
+  mix-blend-mode: darken, multiply;
+}
+/* end */

@@ -5,14 +5,16 @@ $(document).ready(function() {
       var button = $(event.relatedTarget);
       var studentId = button.data('student-id');
       var returnDate = button.data('return-date');
-      var borrow_id = button.data('borrow-id')
-      console.log(borrow_id)
-      // Fetch CSRF token
-      // var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
-      // Fetch late fine information
+      var borrowId = button.data('borrow-id')
+      console.log(borrowId,returnDate,studentId)
+
       $.ajax({
-        url: returnbookUrl.replace('0', studentId).replace('0', borrow_id),
+        url: returnbookUrl,
         method: 'GET',
+        data: {
+          'student-id': studentId, // Pass student ID as GET parameter
+          'borrow-id': borrowId // Pass borrow ID as GET parameter
+        },
         headers: { "X-CSRFToken": csrftoken },
         success: function(response) {
           if (response && response.late_penalty !== undefined) {

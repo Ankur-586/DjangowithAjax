@@ -1,0 +1,38 @@
+/* DataTables CSS customization for Bootstrap 5 */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  padding: 0.5em 0.75em;
+  margin-left: 2px;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  background-color: #b1b1b1;
+  color: #fff;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background-color: #a9abae;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background-color: #0056b3;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+  border-radius: 0.25rem;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+  border-color: #007bff;
+  box-shadow: none;
+}
+
+.dataTables_wrapper .dataTables_length select {
+  border-radius: 0.25rem;
+}
+
+.dataTables_wrapper .dataTables_length select:focus {
+  border-color: #007bff;
+  box-shadow: none;
+}
+
+/* Adjust other DataTables styles as needed to match Bootstrap 5 */

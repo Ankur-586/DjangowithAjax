@@ -54,7 +54,7 @@ class UserAdmin(BaseUserAdmin):
     add_form = UserCreationForm
     readonly_fields = ["created_at", "updated_at"]
     # The fields to be used in displaying the User model.
-    list_display = ["email", "first_name", "last_name", "role", "is_admin", "is_staff"]  # Added "is_staff"
+    list_display = ["id","email", "first_name", "last_name", "role", "is_admin", "is_staff"]  # Added "is_staff"
     list_filter = ["role", "is_admin", "is_staff","is_active"]  # Corrected the list_filter
     fieldsets = [
         (None, {"fields": ["email", "password"]}),
