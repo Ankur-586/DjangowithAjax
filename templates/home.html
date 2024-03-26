@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+<style>
+   
+</style>
     <h2 class="lib text-center mt-3" style="color:gray;">Library Management System</h2>
     <div class="container">
         <ul class="nav nav-tabs">
@@ -106,11 +109,9 @@
                         <tr>
                             <th scope="col">Id</th>
                             <th scope="col">Book Name</th>
-                            <th scope="col">Book ID</th>
                             <th scope="col">Author Name</th>
                             <th scope="col">Book Borrower Student</th>
                             <th scope="col">Student Name</th>
-                            <th scope="col">Student ID</th>
                             <th scope="col">Branch</th>
                             <th scope="col">Borrow Date</th>
                             <th scope="col">Due Date</th>
@@ -129,19 +130,13 @@
                             </td>
                             <td>
                                 {% for book in borrow.books.all %}
-                                    {{ book.id }}
-                                    {% if not forloop.last %}, {% endif %}
-                                {% endfor %}
-                            </td>
-                            <td>
-                                {% for book in borrow.books.all %}
                                     {{ book.author.name }}
                                     {% if not forloop.last %}, {% endif %}
                                 {% endfor %}
                             </td>
                             <td>{{ borrow.book_borrower_student }}</td>
                             <th scope="row">{{ borrow.book_borrower_student.full_name }}</th>
-                            <td>{{  borrow.book_borrower_student.id }}</td>
+                            
                             <td>{{  borrow.branch }}</td>
                             <td>{{  borrow.borrow_date }}</td>
                             <td>{{ borrow.due_date }}</td>

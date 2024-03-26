@@ -1,4 +1,4 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from .models import *
 from django.db.models import Q
@@ -20,33 +20,49 @@ def delete_table(request):
     Student_Information.objects.all().delete()
     return HttpResponse('Deleted')
 
+from django.http import JsonResponse
+
 def book_return(request):
     if request.method == 'GET':
         student_id = request.GET.get("student-id")
         borrow_obj_id = request.GET.get("borrow-id")
-        print(student_id,borrow_obj_id)
-        student = get_object_or_404(MyUser, id=student_id)
-        borrowings = Borrower.objects.get(id=borrow_obj_id,book_borrower_student=student_id)  
-        #late_penalty = late_fine(borrow_obj_id,student_id)  # Replace with your late_fine function logic
-        obj_pk, Stu_pk = borrowings.get_pk_and_student()
-        print('table:',obj_pk,'student:',Stu_pk)
-        #return JsonResponse({'late_penalty': late_penalty})  # Example response
-    # elif request.method == 'POST':
-    #     return_date_str = request.POST.get('returnDate')
-    #     if not return_date_str:
-    #         return HttpResponseBadRequest("Return date is required.")
-        
-    #     return_date = timezone.datetime.strptime(return_date_str, "%Y-%m-%dT%H:%M")  # Parse the return date string
-    #     borrower = Borrower.objects.filter(pk=student_pk, return_date__isnull=True).first()
-    #     if borrower:
-    #         borrower.return_date = return_date
-    #         borrower.save()
-    #         late_penalty = late_fine(student_pk,borrow_id)  # Replace with your late_fine function logic
-    #         return JsonResponse({'success': True, 'message': 'Return successful', 'late_penalty': late_penalty})
-    #     else:
-    #         return JsonResponse({'success': False, 'message': 'Borrower not found or book already returned.'})
-    # else:
-    #     return JsonResponse({'error': 'Invalid request method.'})
+        current_datetime = timezone.localtime(timezone.now())
+        print(student_id, borrow_obj_id)
+        try:
+            borrowing = Borrower.objects.get(id=borrow_obj_id, book_borrower_student=student_id)
+        except Borrower.DoesNotExist:
+            return JsonResponse({'error': "Borrowing not found."}, status=404)
+
+        obj_pk, stu_pk = borrowing.get_pk_and_student()
+
+        if borrowing.book_borrower_student != stu_pk and borrowing.pk != obj_pk:
+            return JsonResponse({'error': "This borrowing does not belong to the specified student."})
+
+        if borrowing.return_date is None and borrowing.due_date < current_datetime:
+            due_date_local = timezone.localtime(borrowing.due_date)
+            no_of_days = (current_datetime - due_date_local).days
+            fine = max(0, no_of_days * 10)  # Add fine for overdue days (minimum 0)
+            return JsonResponse({'fine': fine})
+        else:
+            return JsonResponse({'fine': 0, 'return_date': borrowing.return_date})  # No fine
+
+    elif request.method == 'POST':
+        return_date_str = request.POST.get('returnDate')
+        student_id = request.POST.get("student-id")
+        borrow_obj_id = request.POST.get("borrow-id")
+        if not return_date_str:
+            return JsonResponse({'message': 'Return date is required'})
+        return_date = timezone.datetime.strptime(return_date_str, "%Y-%m-%dT%H:%M")
+
+        # Retrieve borrowing instance and update return date if book hasn't been returned yet
+        try:
+            borrower = Borrower.objects.get(id=borrow_obj_id, book_borrower_student=student_id, return_date__isnull=True)
+        except Borrower.DoesNotExist:
+            return JsonResponse({'error': 'Borrower not found or book already returned.'}, status=404)
+
+        borrower.return_date = return_date
+        borrower.save()
+        return JsonResponse({'message': 'Return date updated successfully.', 'return_date': borrower.return_date})
 
 def delete(request, id):
   member = Borrower.objects.get(id=id)

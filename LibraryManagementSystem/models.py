@@ -122,37 +122,26 @@ class Borrower(models.Model):
     def set_due_date(self):
         self.due_date = self.borrow_date + timedelta(days=10)
 
-    def overdue_fine(self,student_pk,borrow_obj_id):
-        current_datetime = timezone.localtime(timezone.now())
-        borrowing = get_object_or_404(Borrower, id=borrow_obj_id)
-        if borrowing.book_borrower_student != student_pk:
-            return "This borrowing does not belong to the specified student."
-        if borrowing.return_date is None and borrowing.due_date < current_datetime:
-            due_date_local = timezone.localtime(borrowing.due_date)
-            no_of_days = (current_datetime - due_date_local).days
-            fine = max(0, no_of_days * 10)  # Add fine for overdue days (minimum 0)
-            return fine
-        else:
-            return 0
+def overdue_fine(student_id, borrow_obj_id):
+    current_datetime = timezone.localtime(timezone.now())
+    borrowing = Borrower.objects.get(id=borrow_obj_id, book_borrower_student=student_id)
+    obj_pk, stu_pk = borrowing.get_pk_and_student()
+
+    if borrowing.book_borrower_student != stu_pk:
+        return "This borrowing does not belong to the specified student."
+
+    if borrowing.return_date is None and borrowing.due_date < current_datetime:
+        due_date_local = timezone.localtime(borrowing.due_date)
+        no_of_days = (current_datetime - due_date_local).days
+        fine = max(0, no_of_days * 10)  # Add fine for overdue days (minimum 0)
+        return fine
+    else:
+        return 0
     
-def late_fine(student_id,borrow_obj_id):
-    """
-    This View Is connected with daj
-    """
-    student = get_object_or_404(MyUser, id=student_id)
-    # student_info = Student_Information.objects.get(user=student)  # Retrieve Student_Information instance
-    borrowings = Borrower.objects.get(book_borrower_student=student)
-    print('student',borrowings,student) 
-    # total_fine = 0
-    # for borrowing in borrowings:
-    #     fine = borrowing.overdue_fine(student_pk)  # Calculate fine for each borrowing
-    #     total_fine += fine
-    # if total_fine > 0:
-    #     student.Penalty = str(total_fine)
-    #     # student_info.save()  # Uncomment this line if you want to update the student's fine in the database
-    #     return total_fine
-    # else:
-    #     return 'No Fine Amount !!'
+# def late_fine(student_id, borrow_obj_id):
+#     # Here you can implement any additional logic related to calculating late fines.
+#     # For now, let's keep it simple and just call overdue_fine.
+#     return overdue_fine(student_id, borrow_obj_id)
 
 def save_borrowed_book(request, books_borrowed, borrower_student, borrowers_branch):
     borrow_date = timezone.now()
