@@ -5,6 +5,9 @@ urlpatterns = [
     # home page
     path('',views.home,name='home'),
     
+    # search
+    path('search_feature/',views.search_feature,name="search_feature"),
+
     # other pages
     path('book_return/',views.book_return,name='book_return'),
     

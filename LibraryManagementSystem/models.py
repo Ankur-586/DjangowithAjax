@@ -19,7 +19,7 @@ class LibraryCard(models.Model):
         return self.card_number
 
 def generate_library_card(prefix='1nh', branch='is', random_length=3):
-    year = str(datetime.date.today().year)[2:]
+    year = str(dt.date.today().year)[2:]
     random_number = ''.join(str(random.randint(0, 9)) for _ in range(random_length))
     library_card_number = f"{prefix}{year}{branch}{random_number}"
     return library_card_number
@@ -108,8 +108,11 @@ class Borrower(models.Model):
         return ','.join([str(book) for book in self.books.all()])
     
     def __str__(self):
-        return f"{self.pk} - {self.book_borrower_student}"
+        return f"PK: {self.pk} - {self.book_borrower_student}"
     
+    def get_email(self):
+        return self.book_borrower_student.email
+
     def get_pk_and_student(self):
         return self.pk, str(self.book_borrower_student)
 

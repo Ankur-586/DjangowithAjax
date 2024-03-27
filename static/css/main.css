@@ -1,14 +1,14 @@
-body{
-    /* display: flex; */
+body {
+    /* background-color: rebeccapurple; */
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     padding: 10px;
     font-family: 'Poppins', sans-serif;
     /* background-image: url("../images/lms-back.jpeg");
-    background-repeat: no-repeat; /* Prevent the background image from repeating 
-    background-size: cover; /* Adjust the background image size to cover the entire body */
-  }
+    background-repeat: no-repeat;
+    background-size: cover; */
+}
 /* ------------------------- header and footer --------------------------------------- */
 
 /* select2 fix start */

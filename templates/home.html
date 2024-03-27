@@ -2,9 +2,11 @@
 {% load static %}
 {% block content %}
 <style>
-   
+    body{
+         background-color: rebeccapurple;
+    }
 </style>
-    <h2 class="lib text-center mt-3" style="color:gray;">Library Management System</h2>
+    <h2 class="lib text-center mt-5"></h2>
     <div class="container">
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -175,10 +177,17 @@
 {% endblock content %}
 
 {% block scripts %}
+<script>
+    const display_all = "{% static 'home' %}"
+</script>
 <script src="{% static 'js/home/table_tab.js' %}"></script> 
 <script>
     var deleteBookUrl = "{% url 'delete' 0 %}";
 </script>
 <script src="{% static 'js/home/delete.js' %}"></script>
+<script>
+    const search = '{% url "search_feature" %}'
+</script >
+<script src="{% static 'js/Modal-Forms/search.js' %}"></script>
 {% endblock %}
 

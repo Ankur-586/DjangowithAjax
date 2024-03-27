@@ -1,5 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
+      <form class="d-flex" id="searchForm" role="search">
+        <input class="form-control me-2" id="searchInput" name="keyword" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
       <a class="navbar-brand">Library Management System</a>
         <form class="d-flex">
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,9 +24,8 @@
                 <a class="nav-link active" href="http://127.0.0.1:8000/admin/" target="_blank">Admin</a>
               </li>
             </ul>
-          <!--input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button-->
         </form>
       </div>
     </div>
   </nav>
+
