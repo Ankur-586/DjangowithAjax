@@ -1,4 +1,4 @@
-
+/* contact us form */
 .fm{
   max-width: 800px;
   background: #fff;
@@ -129,5 +129,55 @@ form .form-row .textarea{
     width: 40%!important;
   }
 }
-/* -------------------------------------------------------------------------------------------------- */
+/* contact us form end */
 
+/* registration-form */
+.add_user {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.form-group {
+  margin-bottom: 20px;
+}
+.form-label {
+  font-weight: bold;
+}
+.form-control {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.text-danger {
+  color: red;
+}
+.button {
+  text-align: center;
+}
+#submitButton {
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+#submitButton:hover {
+  background-color: #0056b3;
+}
+.alert {
+  margin-top: 20px;
+}
+/* registration-form end */

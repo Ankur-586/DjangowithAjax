@@ -7,7 +7,7 @@ urlpatterns = [
     
     # search
     path('search_feature/',views.search_feature,name="search_feature"),
-
+    path('get_original_data/',views.get_original_data,name="get_original_data"),
     # other pages
     path('book_return/',views.book_return,name='book_return'),
     

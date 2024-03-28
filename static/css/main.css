@@ -1,15 +1,27 @@
 body {
-    /* background-color: rebeccapurple; */
+    /* background-color: rebeccapurple !important; */
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     padding: 10px;
     font-family: 'Poppins', sans-serif;
+    padding: 25px;
+    background-color: white !important;
+    color: black;
+    font-size: 25px;
     /* background-image: url("../images/lms-back.jpeg");
     background-repeat: no-repeat;
     background-size: cover; */
 }
+.dark-mode {
+  background-color: black !important;
+  color: white;
+}
 /* ------------------------- header and footer --------------------------------------- */
+
+/* end */
+
+/* --------------------------------------------------------------- */
 
 /* select2 fix start */
 .select2-close-mask{

@@ -206,7 +206,7 @@ $(document).ready(function() {
             method: 'DELETE',
             headers: { "X-CSRFToken": csrftoken },
             success: function(response) {
-                console.log('Borrower record deleted successfully:', response);
+                $('#errorMessage').delay(2000).text(response.message).show().fadeOut('slow');
                 // Update the table after deletion
                 updateTable();
             },

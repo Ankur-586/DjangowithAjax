@@ -1,20 +1,23 @@
 $(document).ready(function() {
-    $(document).on('click', '.delete-btn', function() {
-        // Fetch the borrower ID associated with the clicked button
+    $('#tab4').on('click', '.delete-btn', function(event) {
+        
         var borrowerId = $(this).data('borrower-id');
-        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
-        $.ajax({
+        var confirmation = confirm("Are you sure you want to delete this record?");
+
+        if (confirmation !== true) {
+            return false; // Explicitly return false on cancel
+          }
+          $.ajax({
             url: deleteBookUrl.replace('0', borrowerId),
-            headers: {
-                'X-CSRFToken': csrftoken
-            },
-            type: 'DELETE',
+            method: 'DELETE',
+            headers: { "X-CSRFToken": csrftoken },
             success: function(response) {
-                $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
-                $('#borrowerRow_' + borrowerId).remove();
+                $('#errorMessage').delay(2000).text(response.message).show().fadeOut('slow');
+                // Update the table after deletion
+                updateTable();
             },
             error: function(xhr, status, error) {
-                console.error('Error deleting borrower:', error);
+                console.error('Error deleting borrower record:', error);
             }
         });
     });

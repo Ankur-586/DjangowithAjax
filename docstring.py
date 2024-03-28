@@ -710,4 +710,25 @@ Do not delete below
 //     });
 // }
 
+def search_feature(request):
+    try:
+        if 'keyword' in request.GET:
+            keyword = request.GET['keyword']
+            borrowers = Borrower.objects.filter(Q(book_borrower_student__email__icontains=keyword)).order_by('-id')
+            data = []
+            for borrower in borrowers:
+                data.append({
+                    'id': borrower.pk,
+                    'book_name': ', '.join(book.title for book in borrower.books.all()),
+                    'author_name': ', '.join(book.author.name for book in borrower.books.all()),
+                    'book_borrower_student': borrower.book_borrower_student.email,
+                    'student_name': borrower.book_borrower_student.full_name,
+                    'branch': borrower.branch.branch_name,
+                    'borrow_date': borrower.borrow_date.strftime('%Y-%m-%d %H:%M:%S'),
+                    'due_date': borrower.due_date.strftime('%Y-%m-%d %H:%M:%S'),
+                    'return_date': borrower.return_date.strftime('%Y-%m-%d %H:%M:%S') if borrower.return_date else None,
+                })
+            return JsonResponse(data, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)})
 '''

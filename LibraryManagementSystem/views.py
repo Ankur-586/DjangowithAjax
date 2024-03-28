@@ -30,11 +30,36 @@ def search_feature(request):
                     'book_borrower_student': borrower.book_borrower_student.email,
                     'student_name': borrower.book_borrower_student.full_name,
                     'branch': borrower.branch.branch_name,
-                    'borrow_date': borrower.borrow_date.strftime('%Y-%m-%d %H:%M:%S'),
-                    'due_date': borrower.due_date.strftime('%Y-%m-%d %H:%M:%S'),
-                    'return_date': borrower.return_date.strftime('%Y-%m-%d %H:%M:%S') if borrower.return_date else None,
+                    'borrow_date': borrower.borrow_date.strftime('%b %d, %Y, %I:%M %p').replace('PM', 'p.m.').replace('AM', 'a.m.'),
+                    'due_date': borrower.due_date.strftime('%b %d, %Y, %I:%M %p').replace('PM', 'p.m.').replace('AM', 'a.m.'),
+                    'return_date': borrower.return_date.strftime('%b %d, %Y, %I:%M %p').replace('PM', 'p.m.').replace('AM', 'a.m.')
+                    if borrower.return_date else '_',
                 })
             return JsonResponse(data, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)})
+
+def get_original_data(request):
+    '''
+    This Function display's the data when the search word is not found
+    '''
+    try:
+        original_data = Borrower.objects.all().order_by('-id')
+        data = []
+        for borrower in original_data:
+                data.append({
+                    'id': borrower.pk,
+                    'book_name': ', '.join(book.title for book in borrower.books.all()),
+                    'author_name': ', '.join(book.author.name for book in borrower.books.all()),
+                    'book_borrower_student': borrower.book_borrower_student.email,
+                    'student_name': borrower.book_borrower_student.full_name,
+                    'branch': borrower.branch.branch_name,
+                    'borrow_date': borrower.borrow_date.strftime('%b %d, %Y, %I:%M %p').replace('PM', 'p.m.').replace('AM', 'a.m.'),
+                    'due_date': borrower.due_date.strftime('%b %d, %Y, %I:%M %p').replace('PM', 'p.m.').replace('AM', 'a.m.'),
+                    'return_date': borrower.return_date.strftime('%b %d, %Y, %I:%M %p').replace('PM', 'p.m.').replace('AM', 'a.m.')
+                     if borrower.return_date else '_',
+                })
+        return JsonResponse(data, safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)})
 
@@ -52,12 +77,9 @@ def book_return(request):
             borrowing = Borrower.objects.get(id=borrow_obj_id, book_borrower_student=student_id)
         except Borrower.DoesNotExist:
             return JsonResponse({'error': "Borrowing not found."}, status=404)
-
         obj_pk, stu_pk = borrowing.get_pk_and_student()
-
         if borrowing.book_borrower_student != stu_pk and borrowing.pk != obj_pk:
             return JsonResponse({'error': "This borrowing does not belong to the specified student."})
-
         if borrowing.return_date is None and borrowing.due_date < current_datetime:
             due_date_local = timezone.localtime(borrowing.due_date)
             no_of_days = (current_datetime - due_date_local).days
@@ -65,7 +87,6 @@ def book_return(request):
             return JsonResponse({'fine': fine})
         else:
             return JsonResponse({'fine': 0, 'return_date': borrowing.return_date})  # No fine
-
     elif request.method == 'POST':
         return_date_str = request.POST.get('returnDate')
         student_id = request.POST.get("student-id")
@@ -73,13 +94,10 @@ def book_return(request):
         if not return_date_str:
             return JsonResponse({'message': 'Return date is required'})
         return_date = timezone.datetime.strptime(return_date_str, "%Y-%m-%dT%H:%M")
-
-        # Retrieve borrowing instance and update return date if book hasn't been returned yet
         try:
             borrower = Borrower.objects.get(id=borrow_obj_id, book_borrower_student=student_id, return_date__isnull=True)
         except Borrower.DoesNotExist:
             return JsonResponse({'error': 'Borrower not found or book already returned.'}, status=404)
-
         borrower.return_date = return_date
         borrower.save()
         return JsonResponse({'message': 'Return date updated successfully.', 'return_date': borrower.return_date})
@@ -97,7 +115,6 @@ def save_borrowed_books(request):
         borrowers_branch = request.POST.get('branch')
         print(books_borrowed, borrower_student, borrowers_branch)
         try:
-            # Call the save_borrowed_book function from your models
             save_borrowed_book(request, books_borrowed, borrower_student, borrowers_branch)
             return JsonResponse({'message': 'Borrowed books saved successfully!'})
         except Exception as e:
@@ -116,9 +133,10 @@ def get_updated_data_for_table(request):
             'book_borrower_student': borrower.book_borrower_student.email,  # Assuming MyUser has an 'email' field
             'student_name': borrower.book_borrower_student.full_name,  # Assuming MyUser has a 'full_name' field
             'branch': borrower.branch.branch_name,  # Assuming Branch has a 'name' field
-            'borrow_date': borrower.borrow_date.strftime('%Y-%m-%d %H:%M:%S'),
-            'due_date': borrower.due_date.strftime('%Y-%m-%d %H:%M:%S'),
-            'return_date': borrower.return_date.strftime('%Y-%m-%d %H:%M:%S') if borrower.return_date else None,
+            'borrow_date': borrower.borrow_date.strftime('%B %d, %Y, %I:%M %p').replace('PM', 'p.m.').replace('AM', 'a.m.'),
+            'due_date': borrower.due_date.strftime('%B %d, %Y, %I:%M %p').replace('PM', 'p.m.').replace('AM', 'a.m.'),
+            'return_date': borrower.return_date.strftime('%B %d, %Y, %I:%M %p').replace('PM', 'p.m.').replace('AM', 'a.m.') 
+            if borrower.return_date else '_',
         })
     return JsonResponse(data, safe=False)   
 
