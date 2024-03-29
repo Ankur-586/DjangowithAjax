@@ -13,6 +13,7 @@
   font-family: 'Poppins', sans-serif;
   background: -webkit-linear-gradient(right, #56d8e4, #9f01ea, #56d8e4, #9f01ea);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 .fm form{
@@ -179,5 +180,9 @@ form .form-row .textarea{
 }
 .alert {
   margin-top: 20px;
+}
+.slim-alert{
+  padding: 5px 10px; /* Adjust the padding as needed */
+  margin: 5px; /* Adjust the margin as needed */
 }
 /* registration-form end */

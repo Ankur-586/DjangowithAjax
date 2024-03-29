@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from Auth.models import MyUser
-from datetime import date, timedelta, datetime as dt
+import datetime as dt
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 import random
