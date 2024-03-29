@@ -1,10 +1,17 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
+      <a class="navbar-brand">Library Management System</a>
       <form class="d-flex" id="searchForm" role="search">
         <input class="form-control me-2" id="searchInput" name="keyword" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
-      <a class="navbar-brand">Library Management System</a>
+      <div class="dark-light-switch">
+        <label class="switch">
+            <input type="checkbox" id="modeToggle" onclick="myFunction()">
+            <span class="slider round"></span>
+        </label>
+      </div>
+      
         <form class="d-flex">
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>

@@ -21,29 +21,13 @@
         <!-- script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" defer></script -->
     </head>
     <body>
-        {% comment %} <div class="dark-light-switch">
-            <label class="switch">
-                <input type="checkbox" id="modeToggle">
-                <span class="slider round"></span>
-            </label>
-            
-          </div> {% endcomment %}
-          <h2>Toggle Dark/Light Mode</h2>
-            <p>Click the button to toggle between dark and light mode for this page.</p>
-            <button onclick="myFunction()">Toggle dark mode</button>
         {% include 'includes/navbar.html' %}
 		{% block content %}
 		{% endblock content %} 
 		{% include 'includes/footer.html' %}
         {% block scripts %}
 		{% endblock %}
-        <script>
-            function myFunction() {
-               var element = document.body;
-               element.classList.toggle("dark-mode");
-            }
-            </script>
-        
+        <script src="{% static 'js/home/dark-light-swt.js' %}"></script>
         <script src="{% static 'js/hide_warinings.js' %}"></script>
     </body>
 </html>
