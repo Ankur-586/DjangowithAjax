@@ -69,13 +69,16 @@
                         <span class="text-danger" id="role_errors"></span>
                     </div>
                 </div>
-                <div class="col-md-6" id="branchField" style="display: none;">
+                <!-- div class="col-md-6">
                     <div class="form-group mt-1">
+                        {% if role == 'admin' %}
+                        {% else %}
                         <label for="branch" class="form-label">Branch</label>
-                        {{ form.branch }}
-                        <span class="text-danger" id="branch_errors"></span>
+                        {{ form.password2 }}
+                        <span class="text-danger" id="password2_errors"></span>
+                        {% endif %}
                     </div>
-                </div>
+                </div-->
             </div>
             <div class="button">
                 <input type="submit" id="submitButton" value="Submit">
@@ -88,37 +91,29 @@
 
 {% block scripts %}
 <script>
-    $(document).ready(function() {
-        $('#role').change(function() {
-            var role = $(this).val();
-            if (role === 'admin') {
-                $('#branchField').hide();
-            } else {
-                $('#branchField').show();
-            }
-        });
-        $('#myForm').submit(function(event) {
-            event.preventDefault();
-            $.ajax({
-                url: "{% url 'register' %}",
-                type: 'POST',
-                data: $(this).serialize(),
-                success: function(response) {
-                    $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
-                    $('#myForm')[0].reset();
-                },
-                error: function(xhr, status, error) {
-                    var errors = xhr.responseJSON.errors;
-                    if (errors) {
-                        $.each(errors, function(field, messages) {
-                            $('#' + field + '_errors').text(messages.join(' '));
-                        });
-                    } else {
-                        console.error("Error:", xhr.responseText);
-                    }
-                }
-            });
-        });
-    });
+   $(document).ready(function() {
+      $('#myForm').submit(function(event) {
+          event.preventDefault();
+          $.ajax({
+              url: "{% url 'register' %}",
+              type: 'POST',
+              data: $(this).serialize(),
+              success: function(response) {
+                  $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
+                  $('#myForm')[0].reset();
+              },
+              error: function(xhr, status, error) {
+               var errors = xhr.responseJSON.errors;
+               if (errors) {
+                   $.each(errors, function(field, messages) {
+                       $('#' + field + '_errors').text(messages.join(' '));
+                   });
+               } else {
+                   console.error("Error:", xhr.responseText);
+               }
+           }
+          });
+      });
+  });
 </script>
 {% endblock %}
