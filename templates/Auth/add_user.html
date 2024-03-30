@@ -57,8 +57,8 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group mt-1">
+                <div class="col-md-6 mt-1">
+                    <div class="form-group">
                         <label for="role" class="form-label">Role</label>
                         <select class="form-control" id="role" name="role" aria-label="Select Role">
                             <option value="">Select a Role</option>
@@ -69,16 +69,18 @@
                         <span class="text-danger" id="role_errors"></span>
                     </div>
                 </div>
-                <!-- div class="col-md-6">
+                <div class="col-md-6" id="branchField" style="display: none;">
                     <div class="form-group mt-1">
-                        {% if role == 'admin' %}
-                        {% else %}
                         <label for="branch" class="form-label">Branch</label>
-                        {{ form.password2 }}
-                        <span class="text-danger" id="password2_errors"></span>
-                        {% endif %}
+                        <select class="form-control" id="branch" name="branch" aria-label="Select Branch">
+                            <option value="">Select a Branch</option>
+                            {% for value, label in form.fields.branch.choices %}
+                                <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="text-danger" id="branch_errors"></span>
                     </div>
-                </div-->
+                </div>
             </div>
             <div class="button">
                 <input type="submit" id="submitButton" value="Submit">
@@ -91,29 +93,7 @@
 
 {% block scripts %}
 <script>
-   $(document).ready(function() {
-      $('#myForm').submit(function(event) {
-          event.preventDefault();
-          $.ajax({
-              url: "{% url 'register' %}",
-              type: 'POST',
-              data: $(this).serialize(),
-              success: function(response) {
-                  $('#successMessage').delay(2000).text(response.message).show().fadeOut('slow');
-                  $('#myForm')[0].reset();
-              },
-              error: function(xhr, status, error) {
-               var errors = xhr.responseJSON.errors;
-               if (errors) {
-                   $.each(errors, function(field, messages) {
-                       $('#' + field + '_errors').text(messages.join(' '));
-                   });
-               } else {
-                   console.error("Error:", xhr.responseText);
-               }
-           }
-          });
-      });
-  });
+   const register_url = "{% url 'register' %}"
 </script>
+<script src="{% static 'js/auth/register_form.js' %}"></script>
 {% endblock %}

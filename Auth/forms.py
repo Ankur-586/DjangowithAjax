@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django import forms
 from .models import *
-from django.utils import timezone
+from LibraryManagementSystem.models import Branch
 from django.core.validators import validate_email
 
 class AddUser(ModelForm):
@@ -9,9 +9,10 @@ class AddUser(ModelForm):
     password2 = forms.CharField(
         label="Password confirmation", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     role = forms.ChoiceField(choices=MyUser.ROLE_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+    branch = forms.ChoiceField(choices=Branch.ROLE_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
     class Meta:
         model = MyUser
-        fields = ['email','first_name','last_name','date_of_birth']
+        fields = ['email','first_name','last_name','date_of_birth','role','branch']
         
         widgets = {
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter Your Email','type':'email'}),
@@ -42,3 +43,6 @@ class AddUser(ModelForm):
             raise forms.ValidationError("Enter a Valid Email Address now")
         return data
     
+
+         
+
