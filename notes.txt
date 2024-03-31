@@ -17,6 +17,9 @@ https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postg
 
 Django Admin ManyToManyField
 https://stackoverflow.com/questions/8043881/django-admin-manytomanyfield
+
+Creating Multiple User Types and Implementing Login Signup with Email instead of Username in Django
+https://medium.com/@sowmendipta/creating-multiple-user-types-and-implementing-login-signup-with-email-instead-of-username-in-django-63a47be0e1af
 -----------------------------------------------------------------------------------------------
 Way1:
 $(document).ready(function(event) {

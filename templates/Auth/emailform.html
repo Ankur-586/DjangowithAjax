@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Login {% endblock %}
+{% block content %}
+
+<style>
+    /* Container for the login form */
+    
+</style>
+
+<div class="login-container mt-5">
+    <div class="login-title">Login</div>
+    {% if not request.user.is_authenticated %}
+    <form method="post" action="" id="loginForm"> 
+        {% csrf_token %}
+        <div class="form-group text-center">
+            <label for="username" class="label_login">Username (Email)</label>
+            {{ login_form.email }}
+            <span class="text-danger" id="email_errors"></span>
+        </div>
+        <div class="button">
+            <button type="submit" class="btn btn-primary">Continue</button>
+        </div>
+    </form>
+    {% else %}
+        <h2> User Already logged In </h2>
+    {% endif %}
+    <div id="successMessage" class="alert alert-success" role="alert" style="display: none;">Login successful!</div>
+</div>
+
+{% endblock content %}

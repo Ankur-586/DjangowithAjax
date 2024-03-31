@@ -43,6 +43,10 @@ class AddUser(ModelForm):
             raise forms.ValidationError("Enter a Valid Email Address now")
         return data
     
+class EmailForm(forms.Form):
+    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'placeholder': 'Enter your email','class': 'form-control'}))
 
+class PasswordForm(forms.Form):
+    password1 = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={'placeholder': 'Enter your password','class': 'form-control'}))
          
 

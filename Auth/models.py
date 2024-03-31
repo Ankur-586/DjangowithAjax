@@ -7,13 +7,11 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     ADMIN = 1
     STAFF = 2
     STUDENT = 3
-    SUPER_ADMIN = 4  # New super admin role
     
     ROLE_CHOICES = (
       (ADMIN, 'Admin'),
       (STAFF, 'Staff'),
       (STUDENT, 'Student'),
-      (SUPER_ADMIN, 'Super Admin'),  # Added new super admin role
     )
 
     email = models.EmailField(

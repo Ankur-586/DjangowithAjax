@@ -130,7 +130,7 @@ form .form-row .textarea{
     width: 40%!important;
   }
 }
-/* contact us form end */
+/* --------------------------- contact us form end ------------------------------ */
 
 /* registration-form */
 .add_user {
@@ -185,4 +185,81 @@ form .form-row .textarea{
   padding: 5px 10px; /* Adjust the padding as needed */
   margin: 5px; /* Adjust the margin as needed */
 }
-/* registration-form end */
+/* ----------------------------------- registration-form end -------------------------------- */
+
+/* login/password-form */
+    
+.login-container {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Title of the form */
+.login-title {
+  text-align: center;
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Form fields */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: bold;
+  color: #555;
+}
+
+input[type="email"] {
+  width: 100%;
+  padding: 8px;
+  /* border: 1px solid #ccc; */
+  border-radius: 5px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+input[type="email"]:focus {
+  border-color: #007bff;
+}
+
+/* Submit button */
+.button {
+  text-align: center;
+}
+
+.btn-primary {
+  padding: 12px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* Error message */
+.text-danger {
+  color: #dc3545;
+  font-size: 14px;
+}
+
+/* Success message */
+.alert-success {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #d4edda;
+  color: #155724;
+}
+/* ------------------------------------- login/password End --------------------------------------- */
